@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.dnd.ui.DatabaseLoginController">
+    <VBox alignment="CENTER" spacing="10.0" AnchorPane.topAnchor="10" AnchorPane.bottomAnchor="10"
+          AnchorPane.leftAnchor="10" AnchorPane.rightAnchor="10">
+        <Label text="Enter Database Credentials" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+
+        <TextField fx:id="urlField" promptText="Database URL"/>
+        <TextField fx:id="usernameField" promptText="Username"/>
+        <PasswordField fx:id="passwordField" promptText="Password"/>
+
+        <HBox alignment="CENTER" spacing="10">
+            <Button text="Connect" onAction="#handleConfirm"/>
+            <Button text="Cancel" onAction="#handleCancel"/>
+        </HBox>
+    </VBox>
+</AnchorPane>
