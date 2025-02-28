@@ -15,10 +15,27 @@ public class DNDCharacter {
     private int intelligence;
     private int wisdom;
     private int charisma;
-    private Location location;
+    private int location;
 
-    // constructor
-    public DNDCharacter(int id, String name, String race, String characterClass, String alignment, int level, boolean isNpc, int strength, int dexterity, int constitution, int intelligence, int wisdom, int charisma, Location location) {
+    // default constructor
+    public DNDCharacter(int id, String name, String race, String characterClass, int level, int location) {
+        this.id = id;
+        this.name = name;
+        this.race = race;
+        this.characterClass = characterClass;
+        this.level = level;
+        strength = 0;
+        dexterity = 0;
+        constitution = 0;
+        intelligence = 0;
+        wisdom = 0;
+        charisma = 0;
+        this.location = location;
+    }
+
+
+    // complete constructor
+    public DNDCharacter(int id, String name, String race, String characterClass, String alignment, int level, boolean isNpc, int strength, int dexterity, int constitution, int intelligence, int wisdom, int charisma, int location) {
         this.id = id;
         this.name = name;
         this.race = race;
@@ -140,11 +157,11 @@ public class DNDCharacter {
         this.charisma = charisma;
     }
 
-    public Location getLocation() {
+    public int getLocation() {
         return location;
     }
 
-    public void setLocation(Location location) {
+    public void setLocation(int location) {
         this.location = location;
     }
 

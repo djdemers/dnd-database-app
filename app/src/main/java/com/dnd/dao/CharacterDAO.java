@@ -12,6 +12,51 @@ public class CharacterDAO {
     // TODO: Insert a new character into the database
     public void insertCharacter(DNDCharacter character) {
         // Use PreparedStatement to insert character into DND_CHARACTER table
+        try {
+            Connection connection = DatabaseConnector.getConnection();
+            String insertStmt = "INSERT INTO DND_CHARACTER" +
+                                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            PreparedStatement preparedStatement = connection.prepareStatement(insertStmt);
+            // character Id
+            preparedStatement.setInt(1, character.getId());
+            // character name
+            preparedStatement.setString(2, character.getName());
+            // character race
+            preparedStatement.setString(3, character.getRace());
+            // character class
+            preparedStatement.setString(4, character.getCharacterClass());
+            // character alignment
+            if (character.getAlignment() == null) {
+                preparedStatement.setNull(5, Types.VARCHAR);
+            } else {
+                preparedStatement.setString(5, character.getAlignment());
+            }
+            // character level
+            preparedStatement.setInt(6, character.getLevel());
+            // character isNpc
+            preparedStatement.setBoolean(7, character.isNpc());
+            // character strength
+            preparedStatement.setInt(8, character.getStrength());
+            // character dexterity
+            preparedStatement.setInt(9, character.getDexterity());
+            // character constitution
+            preparedStatement.setInt(10, character.getConstitution());
+            // character intelligence
+            preparedStatement.setInt(11, character.getIntelligence());
+            // character wisdom
+            preparedStatement.setInt(12, character.getWisdom());
+            // character charisma
+            preparedStatement.setInt(13, character.getCharisma());
+            // character location ID
+            preparedStatement.setInt(14, character.getLocation());
+
+            preparedStatement.executeUpdate();
+            connection.commit();
+
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     // TODO: Retrieve all characters from the database
@@ -22,7 +67,7 @@ public class CharacterDAO {
     }
 
     // TODO: Update an existing character in the database
-    public void updateCharacter(DNDCharacter character) {
+    public void updateCharacter(int characterId, DNDCharacter updatedCharacter) {
         // Use PreparedStatement to update character attributes
     }
 
