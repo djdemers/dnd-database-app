@@ -137,11 +137,10 @@ public class CharacterDAO {
 
     /**
      * Update a character in the database
-     * @param characterId The ID of the character to update
      * @param updatedCharacter The updated character object
      */
-    public void updateCharacter(int characterId, DNDCharacter updatedCharacter) {
-        deleteCharacter(characterId);
+    public void updateCharacter(DNDCharacter updatedCharacter) {
+        deleteCharacter(updatedCharacter.getId());
         insertCharacter(updatedCharacter);
     }
 

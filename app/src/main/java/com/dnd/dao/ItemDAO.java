@@ -89,12 +89,11 @@ public class ItemDAO {
 
     /**
      * Update an item in the database
-     * @param ID The ID of the item to update
      * @param updatedItem The updated item
      */
-    public void updateItem(int ID, Item updatedItem) {
+    public void updateItem(Item updatedItem) {
         // Update item using its ID
-        deleteItem(ID);
+        deleteItem(updatedItem.getId());
         insertItem(updatedItem);
     }
 
