@@ -37,6 +37,7 @@ public class DatabaseLoginController {
                 DatabaseConnector.setCredentials(url, username, password);
                 DatabaseConnector.getConnection();  // Try connecting
                 confirmed = true;
+                dialogStage.close();
 
                 openModelSelectionStage();
                 

@@ -6,11 +6,18 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import javafx.scene.control.Button;
+import javafx.fxml.FXMLLoader;
+import java.io.IOException;
+import javafx.scene.Scene;
+import javafx.stage.Modality;
+import com.dnd.ui.CRUDController;
 
 public class DatabaseModelSelect {
 
     private Stage modelSelectionStage;
     private boolean confirmed = false;
+
+    private CRUDController crudController = new CRUDController();
 
     public void setDialogStage(Stage stage) {
         this.modelSelectionStage = stage;
@@ -20,52 +27,53 @@ public class DatabaseModelSelect {
         return confirmed;
     }
 
-        @FXML
-    private void handleCharacterButton() {
+    @FXML
+    private void handleCharacterButton() throws IOException {
         System.out.println("Character button clicked");
-        // TODO: Implement character button functionality
+
+        crudController.openCRUDStage();
     }
 
     @FXML
-    private void handleItemButton() {
+    private void handleItemButton() throws IOException  {
         System.out.println("Item button clicked");
-        // TODO: Implement item button functionality
+        crudController.openCRUDStage();
     }
 
     @FXML
-    private void handleItemStatsButton() {
+    private void handleItemStatsButton() throws IOException {
         System.out.println("Item stats button clicked");
-        // TODO: Implement item stats button functionality
+        crudController.openCRUDStage();
     }
 
     @FXML
-    private void handleLocationButton() {
+    private void handleLocationButton() throws IOException {
         System.out.println("Location button clicked");
-        // TODO: Implement location button functionality
+        crudController.openCRUDStage();
     }   
 
     @FXML
-    private void handleNotesButton() {
+    private void handleNotesButton() throws IOException {
         System.out.println("Notes button clicked");
-        // TODO: Implement notes button functionality
+        crudController.openCRUDStage();
     }   
 
     @FXML
-    private void handleObjectivesButton() {
+    private void handleObjectivesButton() throws IOException {
         System.out.println("Objectives button clicked");
-        // TODO: Implement objectives button functionality
+        crudController.openCRUDStage();
     }   
 
     @FXML
-    private void handleQuestButton() {
+    private void handleQuestButton() throws IOException {
         System.out.println("Quest button clicked");
-        // TODO: Implement quest button functionality
+        crudController.openCRUDStage();
     }      
 
     @FXML
-    private void handleSessionLogButton() {
+    private void handleSessionLogButton() throws IOException {
         System.out.println("Session log button clicked");
-        // TODO: Implement session log button functionality
+        crudController.openCRUDStage();
     }      
 
     @FXML
