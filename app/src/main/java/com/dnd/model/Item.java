@@ -1,5 +1,8 @@
 package com.dnd.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Item {
     private int id;
     private String itemName;

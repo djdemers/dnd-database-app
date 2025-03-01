@@ -14,54 +14,67 @@ public class CharacterDAO {
      */
     public void insertCharacter(DNDCharacter character) {
         // Use PreparedStatement to insert character into DND_CHARACTER table
+        Connection conn = null;
+        PreparedStatement stmt = null;
         try {
-            Connection connection = DatabaseConnector.getConnection();
+            conn = DatabaseConnector.getConnection();
             String insertStmt = "INSERT INTO DND_CHARACTER (CHAR_ID, CHAR_NAME, CHAR_RACE, CHAR_CLASS, CHAR_ALIGNMENT, CHAR_BACKGROUND, CHAR_LEVEL, NPC, STRENGTH, DEXTERITY, CONSTITUTION, INTELLIGENCE, WISDOM, CHARISMA, IS_IN) " +
-                                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-            PreparedStatement preparedStatement = connection.prepareStatement(insertStmt);
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            stmt = conn.prepareStatement(insertStmt);
             // character Id
-            preparedStatement.setInt(1, character.getId());
+            stmt.setInt(1, character.getId());
             // character name
-            preparedStatement.setString(2, character.getName());
+            stmt.setString(2, character.getName());
             // character race
-            preparedStatement.setString(3, character.getRace());
+            stmt.setString(3, character.getRace());
             // character class
-            preparedStatement.setString(4, character.getCharacterClass());
+            stmt.setString(4, character.getCharacterClass());
             // character alignment
             if (character.getAlignment() == null) {
-                preparedStatement.setNull(5, Types.VARCHAR);
+                stmt.setNull(5, Types.VARCHAR);
             } else {
-                preparedStatement.setString(5, character.getAlignment());
+                stmt.setString(5, character.getAlignment());
             }
             // character background
             if (character.getBackground() == null) {
-                preparedStatement.setNull(6, Types.VARCHAR);
+                stmt.setNull(6, Types.VARCHAR);
             } else {
-                preparedStatement.setString(6, character.getBackground());
+                stmt.setString(6, character.getBackground());
             }
             // character level
-            preparedStatement.setInt(7, character.getLevel());
+            stmt.setInt(7, character.getLevel());
             // character isNpc
-            preparedStatement.setBoolean(8, character.isNpc());
+            stmt.setBoolean(8, character.isNpc());
             // character strength
-            preparedStatement.setInt(9, character.getStrength());
+            stmt.setInt(9, character.getStrength());
             // character dexterity
-            preparedStatement.setInt(10, character.getDexterity());
+            stmt.setInt(10, character.getDexterity());
             // character constitution
-            preparedStatement.setInt(11, character.getConstitution());
+            stmt.setInt(11, character.getConstitution());
             // character intelligence
-            preparedStatement.setInt(12, character.getIntelligence());
+            stmt.setInt(12, character.getIntelligence());
             // character wisdom
-            preparedStatement.setInt(13, character.getWisdom());
+            stmt.setInt(13, character.getWisdom());
             // character charisma
-            preparedStatement.setInt(14, character.getCharisma());
+            stmt.setInt(14, character.getCharisma());
             // character location ID
-            preparedStatement.setInt(15, character.getLocation());
+            stmt.setInt(15, character.getLocation());
 
-            preparedStatement.executeUpdate();
+            stmt.executeUpdate();
 
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                if (stmt != null) {
+                    stmt.close();
+                }
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -71,13 +84,16 @@ public class CharacterDAO {
      */
     public List<DNDCharacter> getAllCharacters() {
         List<DNDCharacter> characters = new ArrayList<>();
+        Connection conn = null;
+        Statement stmt = null;
+        ResultSet rs = null;
 
         try {
-            Connection connection = DatabaseConnector.getConnection();
+            conn = DatabaseConnector.getConnection();
 
-            Statement stmt = connection.createStatement();
+            stmt = conn.createStatement();
             String queryStmt = "SELECT * FROM DND_CHARACTER";
-            ResultSet rs = stmt.executeQuery(queryStmt);
+            rs = stmt.executeQuery(queryStmt);
 
             while (rs.next()) {
                 DNDCharacter newCharacter = new DNDCharacter(
@@ -101,6 +117,20 @@ public class CharacterDAO {
         } catch (SQLException e) {
             e.printStackTrace();
             characters = null;
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (stmt != null) {
+                    stmt.close();
+                }
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
         return characters;
     }
@@ -121,15 +151,28 @@ public class CharacterDAO {
      * @param locationId The ID of the location to set for the character
      */
     public void updateCharacterLocation(int characterId, int locationId) {
+        Connection conn = null;
+        PreparedStatement stmt = null;
         try {
-            Connection connection = DatabaseConnector.getConnection();
+            conn = DatabaseConnector.getConnection();
             String updateStmt = "UPDATE DND_CHARACTER SET IS_IN = ? WHERE CHAR_ID = ?";
-            PreparedStatement preparedStatement = connection.prepareStatement(updateStmt);
-            preparedStatement.setInt(1, locationId);
-            preparedStatement.setInt(2, characterId);
-            preparedStatement.executeUpdate();
+            stmt = conn.prepareStatement(updateStmt);
+            stmt.setInt(1, locationId);
+            stmt.setInt(2, characterId);
+            stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                if (stmt != null) {
+                    stmt.close();
+                }
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -138,14 +181,27 @@ public class CharacterDAO {
      * @param characterId The ID of the character to delete
      */
     public void deleteCharacter(int characterId) {
+        Connection conn = null;
+        PreparedStatement stmt = null;
         try {
-            Connection connection = DatabaseConnector.getConnection();
+            conn = DatabaseConnector.getConnection();
             String deleteStmt = "DELETE FROM DND_CHARACTER WHERE CHAR_ID = ?";
-            PreparedStatement preparedStatement = connection.prepareStatement(deleteStmt);
-            preparedStatement.setInt(1, characterId);
-            preparedStatement.executeUpdate();
+            stmt = conn.prepareStatement(deleteStmt);
+            stmt.setInt(1, characterId);
+            stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                if (stmt != null) {
+                    stmt.close();
+                }
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -156,12 +212,15 @@ public class CharacterDAO {
      */
     public DNDCharacter getCharacterById(int characterId) {
         DNDCharacter newCharacter = null;
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
         try {
-            Connection connection = DatabaseConnector.getConnection();
+            conn = DatabaseConnector.getConnection();
             String queryStmt = "SELECT * FROM DND_CHARACTER WHERE CHAR_ID = ?";
-            PreparedStatement preparedStatement = connection.prepareStatement(queryStmt);
-            preparedStatement.setInt(1, characterId);
-            ResultSet rs = preparedStatement.executeQuery();
+            stmt = conn.prepareStatement(queryStmt);
+            stmt.setInt(1, characterId);
+            rs = stmt.executeQuery();
 
             if (rs.next()) {
                 newCharacter = new DNDCharacter(
@@ -183,6 +242,20 @@ public class CharacterDAO {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (stmt != null) {
+                    stmt.close();
+                }
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
         return newCharacter;
     }

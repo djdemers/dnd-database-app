@@ -1,47 +1,41 @@
 package com.dnd.dao;
 
 import com.dnd.model.Item;
+import com.dnd.model.ItemStatType;
 import com.dnd.utils.DatabaseConnector;
-
-import javax.xml.crypto.Data;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import com.dnd.model.ItemStats;
 
 public class ItemDAO {
 
     public void insertItem(Item item) {
         // Use PreparedStatement to insert an item
-        Connection connection = null;
-        PreparedStatement statement = null;
+        Connection conn = null;
+        PreparedStatement stmt = null;
         try {
-            connection = DatabaseConnector.getConnection();
+            conn = DatabaseConnector.getConnection();
             String query = "INSERT INTO ITEM (ITEM_ID, ITEM_NAME, INFO_TEXT, RARITY, ITEM_TYPE) VALUES (?, ?, ?, ?, ?)";
-            statement = connection.prepareStatement(query);
-            statement.setInt(1, item.getId());
-            statement.setString(2, item.getItemName());
-            statement.setString(3, item.getInfoText());
-            statement.setString(4, item.getRarity());
-            statement.setString(5, item.getType());
-            statement.executeUpdate();
+            stmt = conn.prepareStatement(query);
+            stmt.setInt(1, item.getId());
+            stmt.setString(2, item.getItemName());
+            stmt.setString(3, item.getInfoText());
+            stmt.setString(4, item.getRarity());
+            stmt.setString(5, item.getType());
+            stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            // Close the connection
-            if (connection != null) {
-                try {
-                    connection.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
+            try {
+                if (stmt != null) {
+                    stmt.close();
                 }
-            }
-            // Close the statement
-            if (statement != null) {
-                try {
-                    statement.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
+                if (conn != null) {
+                    conn.close();
                 }
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
         }
     }
@@ -49,48 +43,37 @@ public class ItemDAO {
     public List<Item> getAllItems() {
         List<Item> items = new ArrayList<>();
         // Execute SELECT * FROM ITEM
-        Connection connection = null;
-        Statement statement = null;
-        ResultSet resultSet = null;
+        Connection conn = null;
+        Statement stmt = null;
+        ResultSet rs = null;
         try {
-            connection = DatabaseConnector.getConnection();
-            statement = connection.createStatement();
-            resultSet = statement.executeQuery("SELECT * FROM ITEM");
-            while (resultSet.next()) {
-                int id = resultSet.getInt("ITEM_ID");
-                String itemName = resultSet.getString("ITEM_NAME");
-                String infoText = resultSet.getString("INFO_TEXT");
-                String rarity = resultSet.getString("RARITY");
-                String type = resultSet.getString("ITEM_TYPE");
+            conn = DatabaseConnector.getConnection();
+            stmt = conn.createStatement();
+            rs = stmt.executeQuery("SELECT * FROM ITEM");
+            while (rs.next()) {
+                int id = rs.getInt("ITEM_ID");
+                String itemName = rs.getString("ITEM_NAME");
+                String infoText = rs.getString("INFO_TEXT");
+                String rarity = rs.getString("RARITY");
+                String type = rs.getString("ITEM_TYPE");
                 Item item = new Item(id, itemName, infoText, rarity, type);
                 items.add(item);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            // Close the connection
-            if (connection != null) {
-                try {
-                    connection.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
+            try {
+                if (rs != null) {
+                    rs.close();
                 }
-            }
-            // Close the statement
-            if (statement != null) {
-                try {
-                    statement.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
+                if (stmt != null) {
+                    stmt.close();
                 }
-            }
-            // Close the result set
-            if (resultSet != null) {
-                try {
-                    resultSet.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
+                if (conn != null) {
+                    conn.close();
                 }
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
         }
         return items;
@@ -104,107 +87,246 @@ public class ItemDAO {
 
     public void deleteItem(int itemId) {
         // Remove item using its ID
-        Connection connection = null;
-        PreparedStatement statement = null;
+        Connection conn = null;
+        PreparedStatement stmt = null;
         try {
-            connection = DatabaseConnector.getConnection();
+            conn = DatabaseConnector.getConnection();
             String query = "DELETE FROM ITEM WHERE ITEM_ID = ?";
-            statement = connection.prepareStatement(query);
-            statement.setInt(1, itemId);
-            statement.executeUpdate();
+            stmt = conn.prepareStatement(query);
+            stmt.setInt(1, itemId);
+            stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            // Close the connection
-            if (connection != null) {
-                try {
-                    connection.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
+            try {
+                if (stmt != null) {
+                    stmt.close();
                 }
-            }
-            // Close the statement
-            if (statement != null) {
-                try {
-                    statement.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
+                if (conn != null) {
+                    conn.close();
                 }
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
         }
     }
 
     public Item getItemById(int itemId) {
         // Execute SELECT WHERE ITEM_ID = ?
-        Connection connection = null;
-        PreparedStatement statement = null;
-        ResultSet resultSet = null;
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
         try {
-            connection = DatabaseConnector.getConnection();
+            conn = DatabaseConnector.getConnection();
             String query = "SELECT * FROM ITEM WHERE ITEM_ID = ?";
-            statement = connection.prepareStatement(query);
-            statement.setInt(1, itemId);
-            resultSet = statement.executeQuery();
-            if (resultSet.next()) {
-                int id = resultSet.getInt("ITEM_ID");
-                String itemName = resultSet.getString("ITEM_NAME");
-                String infoText = resultSet.getString("INFO_TEXT");
-                String rarity = resultSet.getString("RARITY");
-                String type = resultSet.getString("ITEM_TYPE");
+            stmt = conn.prepareStatement(query);
+            stmt.setInt(1, itemId);
+            rs = stmt.executeQuery();
+            if (rs.next()) {
+                int id = rs.getInt("ITEM_ID");
+                String itemName = rs.getString("ITEM_NAME");
+                String infoText = rs.getString("INFO_TEXT");
+                String rarity = rs.getString("RARITY");
+                String type = rs.getString("ITEM_TYPE");
                 return new Item(id, itemName, infoText, rarity, type);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            // Close the connection
-            if (connection != null) {
-                try {
-                    connection.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
+            try {
+                if (rs != null) {
+                    rs.close();
                 }
-            }
-            // Close the statement
-            if (statement != null) {
-                try {
-                    statement.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
+                if (stmt != null) {
+                    stmt.close();
                 }
-            }
-            // Close the result set
-            if (resultSet != null) {
-                try {
-                    resultSet.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
+                if (conn != null) {
+                    conn.close();
                 }
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
         }
         return null;
     }
 
-    // TODO: Manage item stats (INSERT, UPDATE, DELETE)
+    public void insertItemStat(int itemId, ItemStats itemStat) {
+        // Use PreparedStatement to insert an item stat
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        try {
+            conn = DatabaseConnector.getConnection();
+            String query = "INSERT INTO ITEM_STATS (ITEM_ID, STAT_NAME, AMOUNT) VALUES (?, ?, ?)";
+            stmt = conn.prepareStatement(query);
+            stmt.setInt(1, itemId);
+            stmt.setString(2, itemStat.getStatType().toString());
+            stmt.setInt(3, itemStat.getAmount());
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (stmt != null) {
+                    stmt.close();
+                }
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void insertItemStat(int itemID, ItemStatType statType, int amount) {
+        // Use PreparedStatement to insert an item stat
+        ItemStats itemStat = new ItemStats(itemID, statType, amount);
+        insertItemStat(itemID, itemStat);
+    }
+
+    public void updateItemStat(int itemId, ItemStatType statType, int amount) {
+        // Update item stat using its ID and stat type
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        try {
+            conn = DatabaseConnector.getConnection();
+            String query = "UPDATE ITEM_STATS SET AMOUNT = ? WHERE ITEM_ID = ? AND STAT_NAME = ?";
+            stmt = conn.prepareStatement(query);
+            stmt.setInt(1, amount);
+            stmt.setInt(2, itemId);
+            stmt.setString(3, statType.toString());
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (stmt != null) {
+                    stmt.close();
+                }
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void deleteItemStat(int itemID, ItemStatType statType) {
+        // Remove item stat using its ID and stat type
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        try {
+            conn = DatabaseConnector.getConnection();
+            String query = "DELETE FROM ITEM_STATS WHERE ITEM_ID = ? AND STAT_NAME = ?";
+            stmt = conn.prepareStatement(query);
+            stmt.setInt(1, itemID);
+            stmt.setString(2, statType.toString());
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (stmt != null) {
+                    stmt.close();
+                }
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public List<ItemStats> getItemStatsforItem(int itemId) {
+        List<ItemStats> itemStats = new ArrayList<>();
+        // Execute SELECT * FROM ITEM_STATS WHERE ITEM_ID = ?
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        try {
+            conn = DatabaseConnector.getConnection();
+            String query = "SELECT * FROM ITEM_STATS WHERE ITEM_ID = ?";
+            stmt = conn.prepareStatement(query);
+            stmt.setInt(1, itemId);
+            rs = stmt.executeQuery();
+            while (rs.next()) {
+                ItemStatType statType = ItemStatType.valueOf(rs.getString("STAT_NAME"));
+                int amount = rs.getInt("AMOUNT");
+                ItemStats itemStat = new ItemStats(itemId, statType, amount);
+                itemStats.add(itemStat);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (stmt != null) {
+                    stmt.close();
+                }
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return itemStats;
+    }
+
+    public List<ItemStats> getAllItemStats() {
+        // Execute SELECT * FROM ITEM_STATS
+        List<ItemStats> itemStats = new ArrayList<>();
+        Connection conn = null;
+        Statement stmt = null;
+        ResultSet rs = null;
+        try {
+            conn = DatabaseConnector.getConnection();
+            stmt = conn.createStatement();
+            rs = stmt.executeQuery("SELECT * FROM ITEM_STATS");
+            while (rs.next()) {
+                int id = rs.getInt("ITEM_ID");
+                ItemStatType statType = ItemStatType.valueOf(rs.getString("STAT_NAME"));
+                int amount = rs.getInt("AMOUNT");
+                ItemStats itemStat = new ItemStats(id, statType, amount);
+                itemStats.add(itemStat);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (stmt != null) {
+                    stmt.close();
+                }
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return itemStats;
+    }
 
     public static void main(String[] args) {
-        DatabaseConnector.setCredentials("jdbc:mysql://localhost:3306/d&d_database", "root", "");
+        DatabaseConnector.setCredentials("jdbc:mysql://localhost:3306/d&d_database", "root", "Trailrated1941!");
 
         // Test the ItemDAO class
         ItemDAO itemDAO = new ItemDAO();
-        Item newItem = new Item(4, "Sword of Sharpness", "A sword that can cut through anything", "Legendary", "Weapon");
-        itemDAO.insertItem(newItem);
-        List<Item> items = itemDAO.getAllItems();
-        for (Item item : items) {
+        List<Item> itemList = itemDAO.getAllItems();
+        for (Item item : itemList) {
             System.out.println(item);
         }
-
-        // delete item
-        itemDAO.deleteItem(4);
-
-        System.out.println("After deleting item 4:");
-        items = itemDAO.getAllItems();
-        for (Item item : items) {
-            System.out.println(item);
+        System.out.println("------------------------------------------");
+        List<ItemStats> allItemStats = itemDAO.getItemStatsforItem(1);
+        for (ItemStats itemStat : allItemStats) {
+            System.out.println(itemStat);
         }
     }
 }

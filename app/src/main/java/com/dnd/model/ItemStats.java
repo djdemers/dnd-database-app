@@ -1,13 +1,40 @@
 package com.dnd.model;
 
 public class ItemStats {
-    // TODO: Define objective attributes
+    private final int itemID;
+    private ItemStatType statType;
+    private int amount;
 
+    public ItemStats(int itemID, ItemStatType statType, int amount) {
+        this.itemID = itemID;
+        this.statType = statType;
+        this.amount = amount;
+    }
 
-    // TODO: Implement constructor
+    public int getItemID() {
+        return itemID;
+    }
 
+    public ItemStatType getStatType() {
+        return statType;
+    }
 
-    // TODO: Generate Getters and Setters for all fields
+    public void setStatType(ItemStatType statType) {
+        this.statType = statType;
+    }
 
-    // TODO: Override toString() for easy output
+    public int getAmount() {
+        return amount;
+    }
+
+    public void setAmount(int amount) {
+        this.amount = amount;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Item ID: %d, Stat Type: %s, Amount: %d", itemID, statType, amount);
+    }
 }
+
+
