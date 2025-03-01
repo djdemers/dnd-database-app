@@ -10,6 +10,10 @@ import com.dnd.model.ItemStats;
 
 public class ItemDAO {
 
+    /**
+     * Insert an item into the database
+     * @param item The item to insert
+     */
     public void insertItem(Item item) {
         // Use PreparedStatement to insert an item
         Connection conn = null;
@@ -40,6 +44,10 @@ public class ItemDAO {
         }
     }
 
+    /**
+     * Get all items from the database
+     * @return A list of all items
+     */
     public List<Item> getAllItems() {
         List<Item> items = new ArrayList<>();
         // Execute SELECT * FROM ITEM
@@ -79,12 +87,21 @@ public class ItemDAO {
         return items;
     }
 
+    /**
+     * Update an item in the database
+     * @param ID The ID of the item to update
+     * @param updatedItem The updated item
+     */
     public void updateItem(int ID, Item updatedItem) {
         // Update item using its ID
         deleteItem(ID);
         insertItem(updatedItem);
     }
 
+    /**
+     * Delete an item from the database
+     * @param itemId The ID of the item to delete
+     */
     public void deleteItem(int itemId) {
         // Remove item using its ID
         Connection conn = null;
@@ -111,6 +128,11 @@ public class ItemDAO {
         }
     }
 
+    /**
+     * Get an item by its ID
+     * @param itemId The ID of the item to retrieve
+     * @return The item with the given ID, or null if not found
+     */
     public Item getItemById(int itemId) {
         // Execute SELECT WHERE ITEM_ID = ?
         Connection conn = null;
@@ -150,6 +172,11 @@ public class ItemDAO {
         return null;
     }
 
+    /**
+     * Insert an item stat into the database
+     * @param itemId The ID of the item to insert the stat for
+     * @param itemStat The item stat to insert
+     */
     public void insertItemStat(int itemId, ItemStats itemStat) {
         // Use PreparedStatement to insert an item stat
         Connection conn = null;
@@ -178,12 +205,24 @@ public class ItemDAO {
         }
     }
 
+    /**
+     * Insert an item stat into the database
+     * @param itemID The ID of the item to insert the stat for
+     * @param statType The type of stat to insert
+     * @param amount The amount of the stat to insert
+     */
     public void insertItemStat(int itemID, ItemStatType statType, int amount) {
         // Use PreparedStatement to insert an item stat
         ItemStats itemStat = new ItemStats(itemID, statType, amount);
         insertItemStat(itemID, itemStat);
     }
 
+    /**
+     * Update an item stat in the database
+     * @param itemId The ID of the item to update the stat for
+     * @param statType The type of stat to update
+     * @param amount The new amount of the stat
+     */
     public void updateItemStat(int itemId, ItemStatType statType, int amount) {
         // Update item stat using its ID and stat type
         Connection conn = null;
@@ -212,6 +251,11 @@ public class ItemDAO {
         }
     }
 
+    /**
+     * Delete an item stat from the database
+     * @param itemID The ID of the item to delete the stat for
+     * @param statType The type of stat to delete
+     */
     public void deleteItemStat(int itemID, ItemStatType statType) {
         // Remove item stat using its ID and stat type
         Connection conn = null;
@@ -239,6 +283,11 @@ public class ItemDAO {
         }
     }
 
+    /**
+     * Get all item stats for an item
+     * @param itemId The ID of the item to get stats for
+     * @return A list of all item stats for the item
+     */
     public List<ItemStats> getItemStatsforItem(int itemId) {
         List<ItemStats> itemStats = new ArrayList<>();
         // Execute SELECT * FROM ITEM_STATS WHERE ITEM_ID = ?
@@ -277,6 +326,10 @@ public class ItemDAO {
         return itemStats;
     }
 
+    /**
+     * Get all item stats from the database
+     * @return A list of all item stats
+     */
     public List<ItemStats> getAllItemStats() {
         // Execute SELECT * FROM ITEM_STATS
         List<ItemStats> itemStats = new ArrayList<>();
@@ -312,21 +365,5 @@ public class ItemDAO {
             }
         }
         return itemStats;
-    }
-
-    public static void main(String[] args) {
-        DatabaseConnector.setCredentials("jdbc:mysql://localhost:3306/d&d_database", "root", "Trailrated1941!");
-
-        // Test the ItemDAO class
-        ItemDAO itemDAO = new ItemDAO();
-        List<Item> itemList = itemDAO.getAllItems();
-        for (Item item : itemList) {
-            System.out.println(item);
-        }
-        System.out.println("------------------------------------------");
-        List<ItemStats> allItemStats = itemDAO.getItemStatsforItem(1);
-        for (ItemStats itemStat : allItemStats) {
-            System.out.println(itemStat);
-        }
     }
 }
