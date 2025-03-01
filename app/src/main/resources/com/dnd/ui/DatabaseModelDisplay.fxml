@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.dnd.ui.DatabaseModelSelect">
+    <VBox alignment="CENTER" spacing="10.0" AnchorPane.topAnchor="10" AnchorPane.bottomAnchor="10"
+          AnchorPane.leftAnchor="10" AnchorPane.rightAnchor="10">
+        <Label text="Select a Model" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+
+        <Button fx:id="characterButton" text="Characters" onAction="#handleCharacterButton"/>
+        <Button fx:id="itemButton" text="Items" onAction="#handleItemButton"/>
+        <Button fx:id="itemStatsButton" text="Item Stats" onAction="#handleItemStatsButton"/>
+        <Button fx:id="locationButton" text="Location" onAction="#handleLocationButton"/>
+        <Button fx:id="notesButton" text="Notes" onAction="#handleNotesButton"/>
+        <Button fx:id="objectivesButton" text="Objectives" onAction="#handleObjectivesButton"/>
+        <Button fx:id="questButton" text="Quests" onAction="#handleQuestButton"/>
+        <Button fx:id="sessionLogButton" text="Session Log" onAction="#handleSessionLogButton"/>
+        
+    </VBox>
+</AnchorPane>

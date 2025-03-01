@@ -1,5 +1,7 @@
 package com.dnd.app;
 
+import java.io.IOException;
+
 import com.dnd.ui.DatabaseLoginController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -30,9 +32,28 @@ public class App extends Application {
      */
     private boolean showDatabaseLoginDialog() {
         try {
+            return initDatabaseLoginUI();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public static void main(String[] args) {
+        launch(args);  // Launch JavaFX application
+    }
+
+    public String getGreeting() {
+        return "Hello, World!";
+    }
+
+
+    // Initialize the database login UI and return true if the user confirms the connection
+    public boolean initDatabaseLoginUI() throws IOException {
+        try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/dnd/ui/DatabaseLogin.fxml"));
             Stage dialogStage = new Stage();
-            dialogStage.setTitle("Database Login");
+            dialogStage.setTitle("Database Login!");
             dialogStage.initModality(Modality.WINDOW_MODAL);
             dialogStage.initOwner(primaryStage);
             Scene scene = new Scene(loader.load());
@@ -44,14 +65,9 @@ public class App extends Application {
 
             dialogStage.showAndWait();
             return controller.isConfirmed();
-
-        } catch (Exception e) {
+        } catch (IOException e) {
             e.printStackTrace();
             return false;
         }
-    }
-
-    public static void main(String[] args) {
-        launch(args);  // Launch JavaFX application
     }
 }
