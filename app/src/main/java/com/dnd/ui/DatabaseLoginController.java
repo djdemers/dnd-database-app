@@ -60,11 +60,12 @@ public class DatabaseLoginController {
             modelSelectionStage.setTitle("Model Selection");
             modelSelectionStage.initModality(Modality.WINDOW_MODAL);
             modelSelectionStage.initOwner(dialogStage);
-            System.out.println("Stage initialized");
             Scene scene = new Scene(loader.load());
-            System.out.println("Scene loaded");
+
+            DatabaseModelSelectController controller = loader.getController();
+            controller.setModelSelectionStage(modelSelectionStage);
+
             modelSelectionStage.setScene(scene);
-            System.out.println("Scene set");
             modelSelectionStage.showAndWait();
         } catch (IOException e) {
             System.out.println("Error loading model selection stage: " + e.getMessage());

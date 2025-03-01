@@ -22,19 +22,10 @@ public class CRUDController {
     private Button deleteButton;
 
 
-    public void openCRUDStage() throws IOException {
-        System.out.println("CRUD button clicked");
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/dnd/ui/CRUD.fxml"));
-            Stage crudStage = new Stage();
-            crudStage.setTitle("CRUD");
-                crudStage.initModality(Modality.WINDOW_MODAL);
-            Scene scene = new Scene(loader.load());
-            crudStage.setScene(scene);
-            crudStage.showAndWait();
-        } catch (IOException e) {
-            System.out.println("Error loading CRUD stage: " + e.getMessage());
-        }
+    private Stage crudStage;
+
+    public void setCRUDStage(Stage stage) {
+        this.crudStage = stage;
     }
 
     @FXML

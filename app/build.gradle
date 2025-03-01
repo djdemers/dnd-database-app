@@ -47,3 +47,8 @@ javafx {
     version = "20.0.2"
     modules = [ 'javafx.controls', 'javafx.fxml' ]
 }
+
+// Add this new task
+task buildAndRun {
+    dependsOn 'build', 'run'
+}
