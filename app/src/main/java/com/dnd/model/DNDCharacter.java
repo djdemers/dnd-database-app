@@ -7,6 +7,7 @@ public class DNDCharacter {
     private String race;
     private String characterClass;
     private String alignment;
+    private String background;
     private int level;
     private boolean isNpc;
     private int strength;
@@ -35,12 +36,15 @@ public class DNDCharacter {
 
 
     // complete constructor
-    public DNDCharacter(int id, String name, String race, String characterClass, String alignment, int level, boolean isNpc, int strength, int dexterity, int constitution, int intelligence, int wisdom, int charisma, int location) {
+    public DNDCharacter(int id, String name, String race, String characterClass, String alignment,
+                        String background, int level, boolean isNpc, int strength, int dexterity,
+                        int constitution, int intelligence, int wisdom, int charisma, int location) {
         this.id = id;
         this.name = name;
         this.race = race;
         this.characterClass = characterClass;
         this.alignment = alignment;
+        this.background = background;
         this.level = level;
         this.isNpc = isNpc;
         this.strength = strength;
@@ -91,6 +95,14 @@ public class DNDCharacter {
 
     public void setAlignment(String alignment) {
         this.alignment = alignment;
+    }
+
+    public String getBackground() {
+        return background;
+    }
+
+    public void setBackground(String background) {
+        this.background = background;
     }
 
     public int getLevel() {
@@ -165,10 +177,8 @@ public class DNDCharacter {
         this.location = location;
     }
 
-
-    // TODO: Override toString() for easy display
     @Override
     public String toString() {
-        return String.format("%s the %s %s (Level %d)", name, race, characterClass, level);
+        return String.format("%s the %s %s (Level %d) (ID: %s)", name, race, characterClass, level, id);
     }
 }
