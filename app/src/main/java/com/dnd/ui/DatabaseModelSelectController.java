@@ -90,7 +90,7 @@ public class DatabaseModelSelectController {
     private void handleObjectivesButton() throws IOException {
         System.out.println("Objectives button clicked");
         modelSelectionStage.close();
-            openCRUDStage();
+        openCRUDStage();
 
     }   
 

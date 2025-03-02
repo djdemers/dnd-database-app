@@ -10,6 +10,7 @@ import javafx.stage.Stage;
 import javafx.stage.Modality;
 import java.io.IOException;
 
+
 public class DatabaseLoginController {
     @FXML private TextField urlField;
     @FXML private TextField usernameField;
@@ -32,8 +33,13 @@ public class DatabaseLoginController {
         String username = usernameField.getText();
         String password = passwordField.getText();
 
+        url = "jdbc:mysql://localhost:3306/ff";
+        username = "root";
+        password = "$b5kEYQFBQdDKzc";
+
         if (!url.isEmpty() && !username.isEmpty() && !password.isEmpty()) {
             try {
+                
                 DatabaseConnector.setCredentials(url, username, password);
                 DatabaseConnector.getConnection();  // Try connecting
                 confirmed = true;
@@ -60,7 +66,12 @@ public class DatabaseLoginController {
             modelSelectionStage.setTitle("Model Selection");
             modelSelectionStage.initModality(Modality.WINDOW_MODAL);
             modelSelectionStage.initOwner(dialogStage);
-            Scene scene = new Scene(loader.load());
+            System.out.println("Stage initialized" + modelSelectionStage);
+            loader.load();
+            System.out.println("Loader loaded" + loader);
+            Scene scene = new Scene(loader.getRoot());
+
+            System.out.println("Scene created" + scene);
 
             DatabaseModelSelectController controller = loader.getController();
             controller.setModelSelectionStage(modelSelectionStage);
