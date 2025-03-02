@@ -8,6 +8,9 @@ public class Model {
     LinkedList<Integer> numericAttributes;
     ModelDOA modelDAO;
 
+
+    
+
     public Model() {
         stringAttributes = new LinkedList<>();
         numericAttributes = new LinkedList<>();

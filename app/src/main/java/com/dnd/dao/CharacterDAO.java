@@ -6,14 +6,35 @@ import com.dnd.utils.DatabaseConnector;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import com.dnd.model.Model;
 
-public class CharacterDAO {
+public class CharacterDAO extends ModelDOA {
 
-    // TODO: Insert a new character into the database
-    public void insertCharacter(DNDCharacter character) {
-        // Use PreparedStatement to insert character into DND_CHARACTER table
+    @Override
+    public void insert(Model model) {
+        // TODO implement method stub
+        System.out.println("Inserting character");
     }
 
+    @Override
+    public Model get(Model model) {
+        // TODO implement method stub
+        System.out.println("Getting character");
+        return null;
+    }
+
+    @Override
+    public void update(Model model) {
+        // TODO implement method stub
+        System.out.println("Updating character");
+    }
+
+    @Override
+    public void delete(Model model) {
+        // TODO implement method stub
+        System.out.println("Deleting character");
+    }
+    
     // TODO: Retrieve all characters from the database
     public List<DNDCharacter> getAllCharacters() {
         List<DNDCharacter> characters = new ArrayList<>();
@@ -21,15 +42,6 @@ public class CharacterDAO {
         return characters;
     }
 
-    // TODO: Update an existing character in the database
-    public void updateCharacter(DNDCharacter character) {
-        // Use PreparedStatement to update character attributes
-    }
-
-    // TODO: Delete a character from the database using character ID
-    public void deleteCharacter(int characterId) {
-        // Use PreparedStatement to delete the character
-    }
 
     // TODO: Find a character by ID
     public DNDCharacter getCharacterById(int characterId) {
