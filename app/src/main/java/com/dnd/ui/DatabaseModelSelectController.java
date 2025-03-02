@@ -10,22 +10,23 @@ import javafx.fxml.FXMLLoader;
 import java.io.IOException;
 import javafx.scene.Scene;
 import javafx.stage.Modality;
-import com.dnd.ui.CRUDController;
+
 import com.dnd.dao.CharacterDAO;
 import com.dnd.dao.ItemDAO;
-import com.dnd.dao.ItemStatusDAO;
+import com.dnd.dao.ItemStatsDAO;
 import com.dnd.dao.LocationDAO;
 import com.dnd.dao.QuestDAO;
 import com.dnd.dao.SessionLogDAO;
-import com.dnd.dao.ModelDOA;
+import com.dnd.ui.crud_controllers.CRUDController;
+import com.dnd.dao.ModelDAO;
+import com.dnd.dao.NotesDAO;
+import com.dnd.dao.ObjectivesDAO;
+
 
 public class DatabaseModelSelectController {
 
     private Stage modelSelectionStage;
     private boolean confirmed = false;
-
-
-
 
     public void setModelSelectionStage(Stage stage) {
         this.modelSelectionStage = stage;
@@ -35,7 +36,7 @@ public class DatabaseModelSelectController {
         return confirmed;
     }
 
-    public void renderCrudUI(ModelDOA modelDAO) throws IOException {
+    public void renderCrudUI(ModelDAO modelDAO) throws IOException {
         System.out.println("CRUD button clicked");
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/dnd/ui/CRUD.fxml"));
@@ -47,7 +48,8 @@ public class DatabaseModelSelectController {
 
             CRUDController controller = loader.getController();
             controller.setCRUDStage(crudStage);
-            
+            controller.setModelDAO(modelDAO);
+
             crudStage.setScene(scene);
             crudStage.showAndWait();
         } catch (IOException e) {
@@ -60,7 +62,6 @@ public class DatabaseModelSelectController {
         System.out.println("Character button clicked");
         modelSelectionStage.close();
         CharacterDAO characterDAO = new CharacterDAO();
-
         renderCrudUI(characterDAO);
 
     }
@@ -70,7 +71,7 @@ public class DatabaseModelSelectController {
         System.out.println("Item button clicked");
         modelSelectionStage.close();
         ItemDAO itemDAO = new ItemDAO();
-        // renderCrudUI(itemDAO);
+        renderCrudUI(itemDAO);
 
     }
 
@@ -78,8 +79,8 @@ public class DatabaseModelSelectController {
     private void handleItemStatsButton() throws IOException {
         System.out.println("Item stats button clicked");
         modelSelectionStage.close();
-        // ItemStatusDAO itemStatusDAO = new ItemStatusDAO();
-        // renderCrudUI(itemStatusDAO);
+        ItemStatsDAO itemStatsDAO = new ItemStatsDAO();
+        renderCrudUI(itemStatsDAO);
 
     }
 
@@ -88,7 +89,7 @@ public class DatabaseModelSelectController {
         System.out.println("Location button clicked");
         modelSelectionStage.close();
         LocationDAO locationDAO = new LocationDAO();
-        // openCRUDStage(locationDAO);
+        renderCrudUI(locationDAO);
 
     }   
 
@@ -96,7 +97,8 @@ public class DatabaseModelSelectController {
     private void handleNotesButton() throws IOException {
         System.out.println("Notes button clicked");
         modelSelectionStage.close();
-        // openCRUDStage();
+        NotesDAO notesDAO = new NotesDAO();
+        renderCrudUI(notesDAO);
 
     }   
 
@@ -104,7 +106,8 @@ public class DatabaseModelSelectController {
     private void handleObjectivesButton() throws IOException {
         System.out.println("Objectives button clicked");
         modelSelectionStage.close();
-        // openCRUDStage();
+        ObjectivesDAO objectivesDAO = new ObjectivesDAO();
+        renderCrudUI(objectivesDAO);
 
     }   
 
@@ -112,7 +115,8 @@ public class DatabaseModelSelectController {
     private void handleQuestButton() throws IOException {
         System.out.println("Quest button clicked");
         modelSelectionStage.close();
-        // openCRUDStage();
+        QuestDAO questDAO = new QuestDAO();
+        renderCrudUI(questDAO);
 
     }      
 
@@ -120,7 +124,8 @@ public class DatabaseModelSelectController {
     private void handleSessionLogButton() throws IOException {
         System.out.println("Session log button clicked");
         modelSelectionStage.close();
-        // openCRUDStage();
+        SessionLogDAO sessionLogDAO = new SessionLogDAO();
+        renderCrudUI(sessionLogDAO);
 
         }      
 
@@ -128,26 +133,6 @@ public class DatabaseModelSelectController {
     private void handleCancel() {
         System.out.println("Cancel button clicked");    
         modelSelectionStage.close();
-    }
-
-    private void renderCreateUI(ModelDOA modelDAO) {
-        System.out.println("Create button clicked");
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/dnd/ui/CRUD.fxml"));
-            Stage crudStage = new Stage();
-            crudStage.setTitle("CRUD");
-            crudStage.initModality(Modality.WINDOW_MODAL);
-            crudStage.initOwner(modelSelectionStage);
-            Scene scene = new Scene(loader.load());
-
-            CRUDController controller = loader.getController();
-            controller.setCRUDStage(crudStage);
-            
-            crudStage.setScene(scene);
-            crudStage.showAndWait();
-        } catch (IOException e) {
-            System.out.println("Error loading CRUD stage: " + e.getMessage());
-        }
     }
     
 }

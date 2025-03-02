@@ -6,13 +6,36 @@ import com.dnd.utils.DatabaseConnector;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import com.dnd.model.Model;
 
-public class ItemDAO {
+public class ItemDAO extends ModelDAO {
 
-    // TODO: Insert a new item into the ITEM table
-    public void insertItem(Item item) {
-        // Use PreparedStatement to insert an item
+    @Override
+    public void insert(Model model) {
+        // TODO implement method stub
+        System.out.println("Inserting item");
     }
+
+    @Override
+    public Model get(Model model) {
+        // TODO implement method stub
+        System.out.println("Getting item");
+        return null;
+    }   
+
+        @Override
+    public void update(Model model) {
+        // TODO implement method stub
+        System.out.println("Updating item");
+    }   
+    
+
+    @Override
+    public void delete(Model model) {
+        // TODO implement method stub
+        System.out.println("Deleting item");
+    }   
+
 
     // TODO: Get all items from the database
     public List<Item> getAllItems() {
@@ -21,21 +44,10 @@ public class ItemDAO {
         return items;
     }
 
-    // TODO: Update item details
-    public void updateItem(Item item) {
-        // Update item properties
-    }
-
-    // TODO: Delete an item from the database
-    public void deleteItem(int itemId) {
-        // Remove item using its ID
-    }
-
     // TODO: Retrieve an item by ID
     public Item getItemById(int itemId) {
         // Execute SELECT WHERE ITEM_ID = ?
         return null;
     }
 
-    // TODO: Manage item stats (INSERT, UPDATE, DELETE)
 }

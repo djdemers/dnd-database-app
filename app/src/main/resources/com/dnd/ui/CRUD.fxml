@@ -4,7 +4,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.dnd.ui.CRUDController">
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.dnd.ui.crud_controllers.CRUDController">
     <VBox alignment="CENTER" spacing="10.0" AnchorPane.topAnchor="10" AnchorPane.bottomAnchor="10"
           AnchorPane.leftAnchor="10" AnchorPane.rightAnchor="10">
         <Label text="What would you like to do?" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>

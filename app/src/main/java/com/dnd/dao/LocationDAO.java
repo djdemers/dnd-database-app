@@ -6,29 +6,36 @@ import com.dnd.utils.DatabaseConnector;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import com.dnd.model.Model;
 
-public class LocationDAO {
+public class LocationDAO extends ModelDAO {
 
-    // TODO: Insert a new location into the database
-    public void insertLocation(Location location) {
-        // Use PreparedStatement to insert location
+    @Override
+    public void insert(Model model) {
+        // TODO: Implement insert method
     }
 
-    // TODO: Retrieve all locations from the database
+    @Override
+    public Model get(Model model) {
+        // TODO: Implement get method
+        return null;
+    }
+
+    @Override
+    public void update(Model model) {
+        // TODO: Implement update method
+    }
+
+    @Override
+    public void delete(Model model) {
+        // TODO: Implement delete method
+    }
+
+        // TODO: Retrieve all locations from the database
     public List<Location> getAllLocations() {
         List<Location> locations = new ArrayList<>();
         // Execute SELECT * FROM LOCATION
         return locations;
-    }
-
-    // TODO: Update location details
-    public void updateLocation(Location location) {
-        // Update location attributes
-    }
-
-    // TODO: Delete a location by ID
-    public void deleteLocation(int locationId) {
-        // Use PreparedStatement to delete location
     }
 
     // TODO: Retrieve a location by ID

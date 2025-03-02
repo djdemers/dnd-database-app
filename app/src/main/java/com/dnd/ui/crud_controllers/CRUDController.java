@@ -1,4 +1,4 @@
-package com.dnd.ui;
+package com.dnd.ui.crud_controllers;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -7,22 +7,11 @@ import javafx.stage.Modality;
 import javafx.fxml.FXMLLoader;
 import java.io.IOException;
 import javafx.scene.Scene;
-import com.dnd.dao.ModelDOA;
-
+import com.dnd.dao.ModelDAO;
+import com.dnd.ui.utils.WindowSpawner;
 public class CRUDController {
-    @FXML
-    private Button createButton;
 
-    @FXML
-    private Button readButton;
-
-    @FXML
-    private Button updateButton;
-
-    @FXML
-    private Button deleteButton;
-
-    private ModelDOA modelDAO;
+    private ModelDAO modelDAO;
 
     private Stage crudStage;
 
@@ -30,38 +19,32 @@ public class CRUDController {
         this.crudStage = stage;
     }
 
-    public void setModelDAO(ModelDOA modelDAO) {
+    public void setModelDAO(ModelDAO modelDAO) {
         this.modelDAO = modelDAO;
     }
 
-    private void renderCreateUI() {   
+    private void renderCreateUI() {  
+
+        CreateController controller = null;
+        WindowSpawner.spawnWindow("/com/dnd/ui/Create.fxml", "Create", crudStage, controller, modelDAO);
         System.out.println("Create button clicked");
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/dnd/ui/Create.fxml"));
-            Stage createStage = new Stage();
-            createStage.initModality(Modality.WINDOW_MODAL);
-            createStage.initOwner(crudStage);
-            Scene scene = new Scene(loader.load());
-
-            CreateController controller = loader.getController();
-            controller.setCreateStage(createStage);
-
-            createStage.setScene(scene);
-            createStage.showAndWait();
-        } catch (IOException e) {
-            System.out.println("Error loading create stage: " + e.getMessage());
-        }
     }
 
     private void renderReadUI() {
+        ReadController controller = null;
+        WindowSpawner.spawnWindow("/com/dnd/ui/Read.fxml", "Read", crudStage, controller, modelDAO);
         System.out.println("Read button clicked");
     }
 
     private void renderUpdateUI() {
+        UpdateController controller = null;
+        WindowSpawner.spawnWindow("/com/dnd/ui/Update.fxml", "Update", crudStage, controller, modelDAO);
         System.out.println("Update button clicked");
     }
 
     private void renderDeleteUI() {
+        DeleteController controller = null;
+        WindowSpawner.spawnWindow("/com/dnd/ui/Delete.fxml", "Delete", crudStage, controller, modelDAO);
         System.out.println("Delete button clicked");
     }
 

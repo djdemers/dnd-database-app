@@ -1,15 +1,13 @@
 package com.dnd.dao;
 
-import com.dnd.model.Quest;
-import com.dnd.utils.DatabaseConnector;
-
-import java.sql.*;
+import com.dnd.model.Model;
 import java.util.ArrayList;
 import java.util.List;
-import com.dnd.model.Model;
+import com.dnd.model.Notes;
 
-public class QuestDAO extends ModelDAO {
 
+public class NotesDAO extends ModelDAO {
+    
     @Override
     public void insert(Model model) {
         // TODO: Implement insert method
@@ -31,16 +29,17 @@ public class QuestDAO extends ModelDAO {
         // TODO: Implement delete method
     }
 
-    public List<Quest> getAllQuests() {
-        List<Quest> quests = new ArrayList<>();
-        // Execute SELECT * FROM QUEST
-        return quests;
+    // TODO: Get all items from the database
+    public List<Notes> getAllNotes() {
+        List<Notes> notes = new ArrayList<>();
+        // Execute SELECT * FROM NOTES
+        return notes;
     }
 
-
-    // TODO: Get quest details by ID
-    public Quest getQuestById(int questId) {
-        // Fetch quest by its ID
+    // TODO: Retrieve an item by ID
+    public Notes getNotesById(int notesId) {
+        // Execute SELECT WHERE NOTES_ID = ?
         return null;
     }
+    
 }

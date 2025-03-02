@@ -6,12 +6,29 @@ import com.dnd.utils.DatabaseConnector;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import com.dnd.model.Model;
 
-public class SessionLogDAO {
+public class SessionLogDAO extends ModelDAO {
 
-    // TODO: Insert a new session log into the database
-    public void insertSessionLog(SessionLog log) {
-        // Use PreparedStatement to insert session log
+    @Override
+    public void insert(Model model) {
+        // TODO: Implement insert method
+    }
+
+    @Override
+    public Model get(Model model) {
+        // TODO: Implement get method
+        return null;
+    }
+
+    @Override
+    public void update(Model model) {
+        // TODO: Implement update method
+    }
+
+    @Override
+    public void delete(Model model) {
+        // TODO: Implement delete method
     }
 
     // TODO: Get all session logs from the database
@@ -21,10 +38,6 @@ public class SessionLogDAO {
         return logs;
     }
 
-    // TODO: Delete a session log entry by ID
-    public void deleteSessionLog(int logId) {
-        // Delete session log using its ID
-    }
 
     // TODO: Get session log by ID
     public SessionLog getSessionLogById(int logId) {

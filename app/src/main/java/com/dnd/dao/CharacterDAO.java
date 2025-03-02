@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import com.dnd.model.Model;
 
-public class CharacterDAO extends ModelDOA {
+public class CharacterDAO extends ModelDAO {
 
     @Override
     public void insert(Model model) {

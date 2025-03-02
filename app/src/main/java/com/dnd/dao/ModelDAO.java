@@ -2,7 +2,7 @@ package com.dnd.dao;
 
 import com.dnd.model.Model;
 
-public abstract class ModelDOA {
+public abstract class ModelDAO {
 
 
     public abstract void insert(Model model);
