@@ -62,6 +62,7 @@ public class DatabaseModelSelectController {
         System.out.println("Character button clicked");
         modelSelectionStage.close();
         CharacterDAO characterDAO = new CharacterDAO();
+        
         renderCrudUI(characterDAO);
 
     }

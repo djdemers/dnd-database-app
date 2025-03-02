@@ -10,6 +10,29 @@ import com.dnd.model.Model;
 
 public class CharacterDAO extends ModelDAO {
 
+    private String modelName = "DND_CHARACTER";
+
+    private List<String> attributes = new ArrayList<>();
+
+    public CharacterDAO() {
+        attributes.add("NAME");
+        attributes.add("RACE");
+        attributes.add("CLASS");
+        attributes.add("ALIGNMENT");
+        attributes.add("LEVEL");
+    }
+
+    public List<String> getAttributes() {
+        return attributes;
+    }
+
+
+
+    @Override
+    public String getModelName() {
+        return modelName;
+    }
+
     @Override
     public void insert(Model model) {
         // TODO implement method stub

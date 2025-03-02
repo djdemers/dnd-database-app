@@ -10,6 +10,29 @@ import com.dnd.model.Model;
 
 public class ItemDAO extends ModelDAO {
 
+    private String modelName = "DND_ITEM";
+
+    private List<String> attributes = new ArrayList<>();
+
+    public ItemDAO() {
+        attributes.add("NAME");
+        attributes.add("DESCRIPTION");
+        attributes.add("VALUE");
+        attributes.add("WEIGHT");
+        attributes.add("QUANTITY");
+        attributes.add("LOCATION");
+        attributes.add("NOTES");
+    }
+
+    public List<String> getAttributes() {
+        return attributes;
+    }
+
+    @Override
+    public String getModelName() {
+        return modelName;
+    }
+
     @Override
     public void insert(Model model) {
         // TODO implement method stub

@@ -7,7 +7,23 @@ import com.dnd.model.Notes;
 
 
 public class NotesDAO extends ModelDAO {
-    
+    private String modelName = "DND_NOTES";
+    private List<String> attributes = new ArrayList<>();
+
+    public NotesDAO() {
+        attributes.add("NAME");
+        attributes.add("DESCRIPTION");
+    }
+
+    public List<String> getAttributes() {
+        return attributes;
+    }
+
+    @Override
+    public String getModelName() {
+        return modelName;
+    }
+
     @Override
     public void insert(Model model) {
         // TODO: Implement insert method

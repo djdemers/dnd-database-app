@@ -6,17 +6,23 @@ import javafx.fxml.FXML;
 import javafx.stage.Stage;
 import com.dnd.dao.ModelDAO;
 import com.dnd.model.Model;
+import java.util.List;
 
 public class DeleteController extends Controller {
     
     private Stage deleteStage;
     private ModelDAO modelDAO;
+    private List<String> attributes;
     public void setStage(Stage stage) {
         this.deleteStage = stage;
     }   
 
     public void setModelDAO(ModelDAO modelDAO) {
         this.modelDAO = modelDAO;
+    }
+
+    public void setAttributes(List<String> attributes) {
+        this.attributes = attributes;
     }
 
     @FXML

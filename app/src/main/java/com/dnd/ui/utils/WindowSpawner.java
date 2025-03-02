@@ -22,6 +22,8 @@ public class WindowSpawner {
 
             controller = loader.getController();
             controller.setStage(stage);
+            controller.setModelDAO(modelDAO);
+            controller.setAttributes(modelDAO.getAttributes());
 
             stage.setTitle(title);
             stage.setScene(scene);

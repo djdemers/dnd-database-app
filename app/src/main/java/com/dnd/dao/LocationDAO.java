@@ -10,6 +10,24 @@ import com.dnd.model.Model;
 
 public class LocationDAO extends ModelDAO {
 
+    private String modelName = "DND_LOCATION";
+
+    private List<String> attributes = new ArrayList<>();
+
+    public LocationDAO() {
+        attributes.add("NAME");
+        attributes.add("DESCRIPTION");
+    }   
+
+    public List<String> getAttributes() {
+        return attributes;
+    }   
+
+    @Override
+    public String getModelName() {
+        return modelName;
+    }
+
     @Override
     public void insert(Model model) {
         // TODO: Implement insert method

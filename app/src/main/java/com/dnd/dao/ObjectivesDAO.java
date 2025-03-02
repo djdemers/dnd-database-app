@@ -7,7 +7,23 @@ import com.dnd.model.Objective;
 
 
 public class ObjectivesDAO extends ModelDAO {
-    
+    private String modelName = "DND_OBJECTIVES";
+    private List<String> attributes = new ArrayList<>();
+
+    public ObjectivesDAO() {
+        attributes.add("NAME");
+        attributes.add("DESCRIPTION");
+    }
+
+    public List<String> getAttributes() {
+        return attributes;
+    }
+
+    @Override
+    public String getModelName() {
+        return modelName;
+    }
+
     @Override
     public void insert(Model model) {
         // TODO: Implement insert method
