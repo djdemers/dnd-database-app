@@ -1,51 +1,72 @@
 package com.dnd.model;
 
+import javafx.beans.property.*;
+
 public class Location {
-    private int ID;
-    private String name;
-    private String type;
-    private String info_text;
-    public Location(int ID, String name, String type, String info_text) {
-        this.ID = ID;
-        this.name = name;
-        this.type = type;
-        this.info_text = info_text;
+    private final IntegerProperty id;
+    private final StringProperty name;
+    private final StringProperty type;
+    private final StringProperty infoText;
+
+    public Location(int id, String name, String type, String infoText) {
+        this.id = new SimpleIntegerProperty(id);
+        this.name = new SimpleStringProperty(name);
+        this.type = new SimpleStringProperty(type);
+        this.infoText = new SimpleStringProperty(infoText);
     }
 
-    public int getID() {
-        return ID;
+    // Getters & Property Methods for JavaFX
+    public int getId() {
+        return id.get();
     }
 
-    public void setID(int ID) {
-        this.ID = ID;
+    public IntegerProperty idProperty() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id.set(id);
     }
 
     public String getName() {
+        return name.get();
+    }
+
+    public StringProperty nameProperty() {
         return name;
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.name.set(name);
     }
 
     public String getType() {
+        return type.get();
+    }
+
+    public StringProperty typeProperty() {
         return type;
     }
 
     public void setType(String type) {
-        this.type = type;
+        this.type.set(type);
     }
 
-    public String getInfo_text() {
-        return info_text;
+    public String getInfoText() {
+        return infoText.get();
     }
 
-    public void setInfo_text(String info_text) {
-        this.info_text = info_text;
+    public StringProperty infoTextProperty() {
+        return infoText;
     }
+
+    public void setInfoText(String infoText) {
+        this.infoText.set(infoText);
+    }
+
     @Override
     public String toString() {
-        return String.format("ID: %d, Name: %s, Type: %s", ID, name, type);
+        return String.format("ID: %d, Name: %s, Type: %s", getId(), getName(), getType());
     }
-
 }
+

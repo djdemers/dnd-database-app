@@ -1,53 +1,71 @@
 package com.dnd.model;
 
-public class Quest {
-    private int id;
-    private String name;
-    private String info_text;
-    private int exp_gain;
+import javafx.beans.property.*;
 
-    public Quest(int id, String name, String info_text, int exp_gain) {
-        this.id = id;
-        this.name = name;
-        this.info_text = info_text;
-        this.exp_gain = exp_gain;
+public class Quest {
+    private final IntegerProperty id;
+    private final StringProperty name;
+    private final StringProperty infoText;
+    private final IntegerProperty expGain;
+
+    public Quest(int id, String name, String infoText, int expGain) {
+        this.id = new SimpleIntegerProperty(id);
+        this.name = new SimpleStringProperty(name);
+        this.infoText = new SimpleStringProperty(infoText);
+        this.expGain = new SimpleIntegerProperty(expGain);
     }
 
+    // Getters & Property Methods for JavaFX
     public int getId() {
+        return id.get();
+    }
+
+    public IntegerProperty idProperty() {
         return id;
     }
 
     public void setId(int id) {
-        this.id = id;
+        this.id.set(id);
     }
 
     public String getName() {
+        return name.get();
+    }
+
+    public StringProperty nameProperty() {
         return name;
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.name.set(name);
     }
 
-    public String getInfo_text() {
-        return info_text;
+    public String getInfoText() {
+        return infoText.get();
     }
 
-    public void setInfo_text(String info_text) {
-        this.info_text = info_text;
+    public StringProperty infoTextProperty() {
+        return infoText;
     }
 
-    public int getExp_gain() {
-        return exp_gain;
+    public void setInfoText(String infoText) {
+        this.infoText.set(infoText);
     }
 
-    public void setExp_gain(int exp_gain) {
-        this.exp_gain = exp_gain;
+    public int getExpGain() {
+        return expGain.get();
+    }
+
+    public IntegerProperty expGainProperty() {
+        return expGain;
+    }
+
+    public void setExpGain(int expGain) {
+        this.expGain.set(expGain);
     }
 
     @Override
     public String toString() {
-        return String.format("ID: %d, Name: %s, Info: %s, EXP: %d", id, name, info_text, exp_gain);
+        return String.format("ID: %d, Name: %s, EXP: %d", getId(), getName(), getExpGain());
     }
-
 }

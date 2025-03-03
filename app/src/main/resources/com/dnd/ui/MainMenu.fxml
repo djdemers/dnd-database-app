@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.dnd.ui.MainMenuController">
+
+    <top>
+        <Label text="D&amp;D Database Manager" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-padding: 10px;"/>
+    </top>
+
+    <center>
+        <TabPane>
+            <Tab text="Characters">
+                <VBox spacing="10">
+                    <TableView fx:id="characterTable">
+                        <columns>
+                            <TableColumn fx:id="charIdCol" text="ID" />
+                            <TableColumn fx:id="charNameCol" text="Name" />
+                            <TableColumn fx:id="charRaceCol" text="Race" />
+                            <TableColumn fx:id="charClassCol" text="Class" />
+                        </columns>
+                    </TableView>
+                    <HBox spacing="10">
+                        <Button text="Add" onAction="#handleAddCharacter"/>
+                        <Button text="Edit" onAction="#handleEditCharacter"/>
+                        <Button text="Delete" onAction="#handleDeleteCharacter"/>
+                    </HBox>
+                </VBox>
+            </Tab>
+
+            <Tab text="Items">
+                <TableView fx:id="itemTable">
+                    <columns>
+                        <TableColumn fx:id="itemIdCol" text="ID" />
+                        <TableColumn fx:id="itemNameCol" text="Name" />
+                        <TableColumn fx:id="itemTypeCol" text="Type" />
+                        <TableColumn fx:id="itemRarityCol" text="Rarity" />
+                    </columns>
+                </TableView>
+            </Tab>
+
+            <Tab text="Locations">
+                <TableView fx:id="locationTable">
+                    <columns>
+                        <TableColumn fx:id="locIdCol" text="ID" />
+                        <TableColumn fx:id="locNameCol" text="Name" />
+                        <TableColumn fx:id="locTypeCol" text="Type" />
+                    </columns>
+                </TableView>
+            </Tab>
+
+            <Tab text="Quests">
+                <TableView fx:id="questTable">
+                    <columns>
+                        <TableColumn fx:id="questIdCol" text="ID" />
+                        <TableColumn fx:id="questNameCol" text="Name" />
+                        <TableColumn fx:id="questExpCol" text="EXP" />
+                    </columns>
+                </TableView>
+            </Tab>
+
+        </TabPane>
+    </center>
+
+    <bottom>
+        <Button text="Logout" onAction="#handleLogout" style="-fx-font-size: 14px; -fx-padding: 10px;"/>
+    </bottom>
+
+</BorderPane>

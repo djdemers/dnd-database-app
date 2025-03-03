@@ -1,66 +1,40 @@
 package com.dnd.model;
 
-import java.util.ArrayList;
-import java.util.List;
+import javafx.beans.property.*;
 
 public class Item {
-    private int id;
-    private String itemName;
-    private String infoText;
-    private String rarity;
-    private String type;
+    private final IntegerProperty id;
+    private final StringProperty itemName;
+    private final StringProperty infoText;
+    private final StringProperty rarity;
+    private final StringProperty type;
 
     public Item(int id, String itemName, String infoText, String rarity, String type) {
-        this.id = id;
-        this.itemName = itemName;
-        this.infoText = infoText;
-        this.rarity = rarity;
-        this.type = type;
+        this.id = new SimpleIntegerProperty(id);
+        this.itemName = new SimpleStringProperty(itemName);
+        this.infoText = new SimpleStringProperty(infoText);
+        this.rarity = new SimpleStringProperty(rarity);
+        this.type = new SimpleStringProperty(type);
     }
 
-    public int getId() {
-        return id;
-    }
+    // Getters
+    public int getId() { return id.get(); }
+    public String getItemName() { return itemName.get(); }
+    public String getInfoText() { return infoText.get(); }
+    public String getRarity() { return rarity.get(); }
+    public String getType() { return type.get(); }
 
-    public void setId(int id) {
-        this.id = id;
-    }
+    // Property Getters (For JavaFX TableView)
+    public IntegerProperty idProperty() { return id; }
+    public StringProperty itemNameProperty() { return itemName; }
+    public StringProperty infoTextProperty() { return infoText; }
+    public StringProperty rarityProperty() { return rarity; }
+    public StringProperty typeProperty() { return type; }
 
-    public String getItemName() {
-        return itemName;
-    }
-
-    public void setItemName(String itemName) {
-        this.itemName = itemName;
-    }
-
-    public String getInfoText() {
-        return infoText;
-    }
-
-    public void setInfoText(String infoText) {
-        this.infoText = infoText;
-    }
-
-    public String getRarity() {
-        return rarity;
-    }
-
-    public void setRarity(String rarity) {
-        this.rarity = rarity;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    @Override
-    public String toString() {
-        return String.format("Item ID: %d, Item Name: %s, Type: %s", id, itemName, type);
-    }
-
+    // Setters
+    public void setId(int id) { this.id.set(id); }
+    public void setItemName(String itemName) { this.itemName.set(itemName); }
+    public void setInfoText(String infoText) { this.infoText.set(infoText); }
+    public void setRarity(String rarity) { this.rarity.set(rarity); }
+    public void setType(String type) { this.type.set(type); }
 }

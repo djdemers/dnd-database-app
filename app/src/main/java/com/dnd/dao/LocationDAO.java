@@ -20,10 +20,10 @@ public class LocationDAO {
             conn = DatabaseConnector.getConnection();
             String query = "INSERT INTO LOCATION (LOC_ID, LOC_NAME, LOC_TYPE, INFO_TEXT) VALUES (?, ?, ?, ?)";
             stmt = conn.prepareStatement(query);
-            stmt.setInt(1, location.getID());
+            stmt.setInt(1, location.getId());
             stmt.setString(2, location.getName());
             stmt.setString(3, location.getType());
-            stmt.setString(4, location.getInfo_text());
+            stmt.setString(4, location.getInfoText());
             stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -89,7 +89,7 @@ public class LocationDAO {
      * @param location The updated location object.
      */
     public void updateLocation(Location location) {
-        deleteLocation(location.getID());
+        deleteLocation(location.getId());
         insertLocation(location);
     }
 
