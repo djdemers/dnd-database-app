@@ -14,34 +14,60 @@ public class QuestDAO {
      * Insert a new quest into the database
      * @param quest Quest object to insert
      */
-    public void insertQuest(Quest quest) {
-        // Use PreparedStatement to insert into QUEST table
+    public int insertQuest(Quest quest) {
         Connection conn = null;
         PreparedStatement stmt = null;
+        ResultSet generatedKeys = null;
+        int newId = -1;
+
         try {
             conn = DatabaseConnector.getConnection();
-            String query = "INSERT INTO QUEST (Q_ID, Q_NAME, INFO_TEXT, EXP_GAIN) VALUES (?, ?, ?, ?)";
-            stmt = conn.prepareStatement(query);
-            stmt.setInt(1, quest.getId());
-            stmt.setString(2, quest.getName());
-            stmt.setString(3, quest.getInfoText());
-            stmt.setInt(4, quest.getExpGain());
-            stmt.executeUpdate();
+
+            // 1) Check if a quest with the same name already exists
+            // (Adjust criteria if needed)
+            String checkStmt = "SELECT Q_ID FROM QUEST WHERE Q_NAME = ?";
+            try (PreparedStatement checkExistingStmt = conn.prepareStatement(checkStmt)) {
+                checkExistingStmt.setString(1, quest.getName());
+                try (ResultSet rs = checkExistingStmt.executeQuery()) {
+                    if (rs.next()) {
+                        System.out.println("Quest created with ID: " + rs.getInt(1));
+                        return rs.getInt(1);
+                    }
+                }
+            }
+
+            // 2) Insert new quest
+            String insertStmt = "INSERT INTO QUEST (Q_NAME, INFO_TEXT, EXP_GAIN) VALUES (?, ?, ?)";
+            stmt = conn.prepareStatement(insertStmt, Statement.RETURN_GENERATED_KEYS);
+
+            stmt.setString(1, quest.getName());
+            stmt.setString(2, quest.getInfoText());
+            stmt.setInt(3, quest.getExpGain());
+
+            int affectedRows = stmt.executeUpdate();
+            if (affectedRows > 0) {
+                generatedKeys = stmt.getGeneratedKeys();
+                if (generatedKeys.next()) {
+                    newId = generatedKeys.getInt(1);
+                }
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
             try {
-                if (stmt != null) {
-                    stmt.close();
-                }
-                if (conn != null) {
-                    conn.close();
-                }
+                if (generatedKeys != null) generatedKeys.close();
+                if (stmt != null) stmt.close();
+                if (conn != null) conn.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
         }
+
+        return newId;
     }
+
+
+
 
     /**
      * Get all quests from the database
@@ -90,10 +116,22 @@ public class QuestDAO {
      * @param quest Quest object to update
      */
     public void updateQuest(Quest quest) {
-        // Update quest data
-        deleteQuest(quest.getId());
-        insertQuest(quest);
+        String sql = "UPDATE QUEST SET Q_NAME = ?, INFO_TEXT = ?, EXP_GAIN = ? WHERE Q_ID = ?";
+
+        try (Connection conn = DatabaseConnector.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, quest.getName());
+            stmt.setString(2, quest.getInfoText());
+            stmt.setInt(3, quest.getExpGain());
+            stmt.setInt(4, quest.getId());
+
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
+
 
     /**
      * Delete a quest from the database
@@ -168,46 +206,91 @@ public class QuestDAO {
     }
 
     /**
-     * Insert a new objective into the database
-     * @param obj Objective object to insert
+     * Check if a quest with the given name already exists in the database.
+     * @param questName The name of the quest to check.
+     * @return true if the quest exists, false otherwise.
      */
-    public void insertObjective(Objective obj) {
-        // Use PreparedStatement to insert into OBJECTIVE table
+    public boolean questExists(String questName) {
         Connection conn = null;
         PreparedStatement stmt = null;
+        ResultSet rs = null;
+        boolean exists = false;
+
         try {
             conn = DatabaseConnector.getConnection();
-            String query = "INSERT INTO OBJECTIVES (OBJ_ID, QUEST, OBJ_STATUS, INFO_TEXT) VALUES (?, ?, ?, ?)";
+            String query = "SELECT 1 FROM QUEST WHERE Q_NAME = ?";
             stmt = conn.prepareStatement(query);
-            stmt.setInt(1, obj.getId());
-            stmt.setInt(2, obj.getQuestId());
-            stmt.setString(3, obj.getStatus());
-            stmt.setString(4, obj.getInfoText());
-            stmt.executeUpdate();
+            stmt.setString(1, questName);
+            rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                exists = true; // If we find a row, the quest already exists
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
             try {
-                if (stmt != null) {
-                    stmt.close();
-                }
-                if (conn != null) {
-                    conn.close();
-                }
+                if (rs != null) rs.close();
+                if (stmt != null) stmt.close();
+                if (conn != null) conn.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
         }
+
+        return exists;
     }
+
+
+    /**
+     * Insert a new objective into the database
+     * @param obj Objective object to insert
+     */
+    public void insertObjective(Objective obj) {
+        String sql = "INSERT INTO OBJECTIVES (QUEST, OBJ_STATUS, INFO_TEXT) VALUES (?, ?, ?)";
+
+        try (Connection conn = DatabaseConnector.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+
+            stmt.setInt(1, obj.getQuestId());
+            stmt.setString(2, obj.getStatus());
+            stmt.setString(3, obj.getInfoText());
+
+            int affectedRows = stmt.executeUpdate();
+
+            // If you want to update obj with its new ID from the DB:
+            if (affectedRows > 0) {
+                try (ResultSet keys = stmt.getGeneratedKeys()) {
+                    if (keys.next()) {
+                        obj.setId(keys.getInt(1));
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     /**
      * Update an objective in the database
      * @param obj Objective object to update
      */
     public void updateObjective(Objective obj) {
-        // Update objective data
-        deleteObjective(obj.getId());
-        insertObjective(obj);
+        String sql = "UPDATE OBJECTIVES SET QUEST = ?, OBJ_STATUS = ?, INFO_TEXT = ? WHERE OBJ_ID = ?";
+
+        try (Connection conn = DatabaseConnector.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, obj.getQuestId());
+            stmt.setString(2, obj.getStatus());
+            stmt.setString(3, obj.getInfoText());
+            stmt.setInt(4, obj.getId());
+
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
