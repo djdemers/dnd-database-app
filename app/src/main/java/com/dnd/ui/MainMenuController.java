@@ -226,6 +226,88 @@ public class MainMenuController {
         }
     }
 
+    // -------------------- LOCATION MANAGEMENT --------------------
+
+    // Setup Locations Table
+    private void setupLocationTable() {
+        locIdCol.setCellValueFactory(cellData -> cellData.getValue().idProperty());
+        locNameCol.setCellValueFactory(cellData -> cellData.getValue().nameProperty());
+        locTypeCol.setCellValueFactory(cellData -> cellData.getValue().typeProperty());
+        loadLocationData();
+    }
+
+    // Load Locations
+    private void loadLocationData() {
+        List<Location> locations = locationDAO.getAllLocations();
+        locationTable.getItems().setAll(locations);
+    }
+
+    // Handle Add Location
+    @FXML
+    private void handleAddLocation() {
+        Location newLocation = new Location(0, "", "City", "");
+        boolean confirmed = showLocationForm(newLocation);
+        if (confirmed) {
+            locationDAO.insertLocation(newLocation);
+            loadLocationData();
+        }
+    }
+
+    // Handle Edit Location
+    @FXML
+    private void handleEditLocation() {
+        Location selectedLocation = locationTable.getSelectionModel().getSelectedItem();
+        if (selectedLocation == null) {
+            showAlert("No Location Selected", "Please select a location to edit.");
+            return;
+        }
+        boolean confirmed = showLocationForm(selectedLocation);
+        if (confirmed) {
+            locationDAO.updateLocation(selectedLocation);
+            loadLocationData();
+        }
+    }
+
+    // Handle Delete Location
+    @FXML
+    private void handleDeleteLocation() {
+        Location selectedLocation = locationTable.getSelectionModel().getSelectedItem();
+        if (selectedLocation == null) {
+            showAlert("No Location Selected", "Please select a location to delete.");
+            return;
+        }
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to delete this location?", ButtonType.YES, ButtonType.NO);
+        alert.showAndWait();
+        if (alert.getResult() == ButtonType.YES) {
+            locationDAO.deleteLocation(selectedLocation.getId());
+            loadLocationData();
+        }
+    }
+
+    // Show Location Form
+    private boolean showLocationForm(Location location) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/dnd/ui/LocationForm.fxml"));
+            Scene scene = new Scene(loader.load());
+
+            Stage dialogStage = new Stage();
+            dialogStage.setTitle("Location Editor");
+            dialogStage.initModality(Modality.WINDOW_MODAL);
+            dialogStage.setScene(scene);
+
+            LocationFormController controller = loader.getController();
+            controller.setDialogStage(dialogStage);
+            controller.setLocation(location);
+
+            dialogStage.showAndWait();
+            return controller.isConfirmed();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+
     // -------------------- UTILITIES --------------------
 
     private void showAlert(String title, String content) {
@@ -243,18 +325,6 @@ public class MainMenuController {
         locationTable.getItems().clear();
         questTable.getItems().clear();
         app.showDatabaseLoginDialog();
-    }
-
-    private void setupLocationTable() {
-        locIdCol.setCellValueFactory(cellData -> cellData.getValue().idProperty());
-        locNameCol.setCellValueFactory(cellData -> cellData.getValue().nameProperty());
-        locTypeCol.setCellValueFactory(cellData -> cellData.getValue().typeProperty());
-        loadLocationData();
-    }
-
-    private void loadLocationData() {
-        List<Location> locations = locationDAO.getAllLocations();
-        locationTable.getItems().setAll(locations);
     }
 
     private void setupQuestTable() {
