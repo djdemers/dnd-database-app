@@ -24,7 +24,7 @@ public class CharacterFormController {
     @FXML private TextField charIntelligenceField;
     @FXML private TextField charWisdomField;
     @FXML private TextField charCharismaField;
-    @FXML private ComboBox<Location> charLocationBox; // ✅ Now stores `Location` objects
+    @FXML private ComboBox<Location> charLocationBox;
 
     private Stage dialogStage;
     private DNDCharacter character;

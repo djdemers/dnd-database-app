@@ -14,34 +14,57 @@ public class ItemDAO {
      * Insert an item into the database
      * @param item The item to insert
      */
-    public void insertItem(Item item) {
-        // Use PreparedStatement to insert an item
+    public int insertItem(Item item) {
         Connection conn = null;
         PreparedStatement stmt = null;
+        ResultSet generatedKeys = null;
+        int newId = -1;
+
         try {
             conn = DatabaseConnector.getConnection();
-            String query = "INSERT INTO ITEM (ITEM_ID, ITEM_NAME, INFO_TEXT, RARITY, ITEM_TYPE) VALUES (?, ?, ?, ?, ?)";
-            stmt = conn.prepareStatement(query);
-            stmt.setInt(1, item.getId());
-            stmt.setString(2, item.getItemName());
-            stmt.setString(3, item.getInfoText());
-            stmt.setString(4, item.getRarity());
-            stmt.setString(5, item.getType());
-            stmt.executeUpdate();
+
+            String checkStmt = "SELECT ITEM_ID FROM ITEM WHERE ITEM_NAME = ? AND ITEM_TYPE = ?";
+            PreparedStatement checkExistingStmt = conn.prepareStatement(checkStmt);
+            checkExistingStmt.setString(1, item.getItemName());
+            checkExistingStmt.setString(2, item.getType());
+            ResultSet rs = checkExistingStmt.executeQuery();
+
+            if (rs.next()) {
+                System.out.println("Item already exists with ID: " + rs.getInt(1));
+                return rs.getInt(1);
+            }
+
+            // **If item does not exist, proceed with the insert**
+            String query = "INSERT INTO ITEM (ITEM_NAME, INFO_TEXT, RARITY, ITEM_TYPE) VALUES (?, ?, ?, ?)";
+            stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+
+            stmt.setString(1, item.getItemName());
+            stmt.setString(2, item.getInfoText());
+            stmt.setString(3, item.getRarity());
+            stmt.setString(4, item.getType());
+
+            int affectedRows = stmt.executeUpdate();
+
+            if (affectedRows > 0) {
+                generatedKeys = stmt.getGeneratedKeys();
+                if (generatedKeys.next()) {
+                    newId = generatedKeys.getInt(1);
+                    item.setId(newId);
+                }
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
             try {
-                if (stmt != null) {
-                    stmt.close();
-                }
-                if (conn != null) {
-                    conn.close();
-                }
+                if (generatedKeys != null) generatedKeys.close();
+                if (stmt != null) stmt.close();
+                if (conn != null) conn.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
         }
+
+        return newId;
     }
 
     /**
