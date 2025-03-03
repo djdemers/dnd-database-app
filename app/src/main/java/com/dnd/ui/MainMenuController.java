@@ -5,10 +5,15 @@ import com.dnd.dao.CharacterDAO;
 import com.dnd.dao.ItemDAO;
 import com.dnd.dao.LocationDAO;
 import com.dnd.dao.QuestDAO;
+import com.dnd.dao.SessionLogDAO;
 import com.dnd.model.DNDCharacter;
 import com.dnd.model.Item;
 import com.dnd.model.Location;
+import com.dnd.model.Notes;
 import com.dnd.model.Quest;
+import com.dnd.model.SessionLog;
+import com.dnd.model.SummaryOfEvents;
+
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -52,10 +57,29 @@ public class MainMenuController {
     @FXML private TableColumn<Quest, String> questNameCol;
     @FXML private TableColumn<Quest, Number> questExpCol;
 
+    // Session Table
+    @FXML private TableView<SessionLog> sessionLogTable;
+    @FXML private TableColumn<SessionLog, Number> sessionLogIdCol;
+    @FXML private TableColumn<SessionLog, String> sessionLogTimeStamp;
+    @FXML private TableColumn<SessionLog, String> sessionLogInfoText;
+
+    // -------------------- NOTES --------------------
+    @FXML private TableView<Notes> notesTable;
+    @FXML private TableColumn<Notes, Number> noteIdCol;
+    @FXML private TableColumn<Notes, Number> noteSessionCol;
+    @FXML private TableColumn<Notes, String> noteTextCol;
+
+    // -------------------- SUMMARIES --------------------
+    @FXML private TableView<SummaryOfEvents> summaryTable;
+    @FXML private TableColumn<SummaryOfEvents, Number> summaryIdCol;
+    @FXML private TableColumn<SummaryOfEvents, Number> summarySessionCol;
+    @FXML private TableColumn<SummaryOfEvents, String> summaryTextCol;
+
     private final CharacterDAO characterDAO = new CharacterDAO();
     private final ItemDAO itemDAO = new ItemDAO();
     private final LocationDAO locationDAO = new LocationDAO();
     private final QuestDAO questDAO = new QuestDAO();
+    private final SessionLogDAO sessionLogDAO = new SessionLogDAO();
 
     public void setApp(App app) {
         this.app = app;
@@ -67,6 +91,9 @@ public class MainMenuController {
         setupItemTable();
         setupLocationTable();
         setupQuestTable();
+        setupSessionLogTable();
+        setupNotesTable();
+        setupSummariesTable();
     }
 
     // -------------------- CHARACTER MANAGEMENT --------------------
@@ -381,6 +408,289 @@ public class MainMenuController {
             return false;
         }
     }
+
+    // -------------------- SESSION LOG MANAGEMENT --------------------
+
+    // Setup SessionLog Table
+    private void setupSessionLogTable() {
+        sessionLogIdCol.setCellValueFactory(
+            cellData -> new javafx.beans.property.SimpleIntegerProperty(
+                cellData.getValue().getSessionId()
+            )
+        );
+    
+        sessionLogTimeStamp.setCellValueFactory(
+                cellData -> {
+                    if (cellData.getValue().getTimestamp() != null) {
+                        return new javafx.beans.property.SimpleStringProperty(
+                                cellData.getValue().getTimestamp().toString()
+                        );
+                    } else {
+                        return new javafx.beans.property.SimpleStringProperty("");
+                    }
+                });
+    
+        sessionLogInfoText.setCellValueFactory(
+                cellData -> new javafx.beans.property.SimpleStringProperty(
+                        cellData.getValue().getInfoText()
+                ));
+    
+        loadSessionLogData();
+    }
+    
+
+    // Load SessionLogs
+    private void loadSessionLogData() {
+        List<SessionLog> logs = sessionLogDAO.getAllSessionLogs();
+        sessionLogTable.getItems().setAll(logs);
+    }
+    
+
+    // Handle Add SessionLog
+    @FXML
+    private void handleAddSessionLog() {
+        SessionLog newLog = new SessionLog(0, "New Session Log");
+        
+        boolean confirmed = showSessionLogForm(newLog);
+        if (confirmed) {
+            sessionLogDAO.insertSessionLog(newLog);
+            loadSessionLogData();
+        }
+    }
+    
+
+    // Handle Edit SessionLog
+    @FXML
+    private void handleEditSessionLog() {
+        SessionLog selectedLog = sessionLogTable.getSelectionModel().getSelectedItem();
+        if (selectedLog == null) {
+            showAlert("No Session Log Selected", "Please select a Session Log to edit.");
+            return;
+        }
+
+        boolean confirmed = showSessionLogForm(selectedLog);
+        if (confirmed) {
+            sessionLogDAO.updateSessionLog(selectedLog);
+            loadSessionLogData();
+        }
+    }
+
+
+    // Handle Delete SessionLog
+    @FXML
+    private void handleDeleteSessionLog() {
+        SessionLog selectedLog = sessionLogTable.getSelectionModel().getSelectedItem();
+        if (selectedLog == null) {
+            showAlert("No Session Log Selected", "Please select a Session Log to delete.");
+            return;
+        }
+
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, 
+                "Are you sure you want to delete this Session Log?",
+                ButtonType.YES, ButtonType.NO);
+        alert.showAndWait();
+
+        if (alert.getResult() == ButtonType.YES) {
+            sessionLogDAO.deleteSessionLog(selectedLog.getSessionId());
+            loadSessionLogData();
+        }
+    }
+
+
+    // Show SessionLog Form
+    private boolean showSessionLogForm(SessionLog sessionLog) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/dnd/ui/SessionLogForm.fxml"));
+            Scene scene = new Scene(loader.load());
+    
+            Stage dialogStage = new Stage();
+            dialogStage.setTitle("Session Log Editor");
+            dialogStage.initModality(Modality.WINDOW_MODAL);
+            dialogStage.setScene(scene);
+    
+            SessionLogFormController controller = loader.getController();
+            controller.setDialogStage(dialogStage);
+            controller.setSessionLog(sessionLog);
+    
+            dialogStage.showAndWait();
+            return controller.isConfirmed();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    // Show Note Form
+    private boolean showNoteForm(Notes note) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/dnd/ui/NotesForm.fxml"));
+            Scene scene = new Scene(loader.load());
+    
+            Stage dialogStage = new Stage();
+            dialogStage.setTitle("Note Editor");
+            dialogStage.initModality(Modality.WINDOW_MODAL);
+            dialogStage.setScene(scene);
+    
+            NotesFormController controller = loader.getController();
+            controller.setDialogStage(dialogStage);
+            controller.setNote(note);
+    
+            dialogStage.showAndWait();
+            return controller.isConfirmed();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
+    // Show Summary Form
+    private boolean showSummaryForm(SummaryOfEvents summary) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/dnd/ui/SummaryForm.fxml"));
+            Scene scene = new Scene(loader.load());
+    
+            Stage dialogStage = new Stage();
+            dialogStage.setTitle("Summary Editor");
+            dialogStage.initModality(Modality.WINDOW_MODAL);
+            dialogStage.setScene(scene);
+    
+            SummaryFormController controller = loader.getController();
+            controller.setDialogStage(dialogStage);
+            controller.setSummary(summary);
+    
+            dialogStage.showAndWait();
+            return controller.isConfirmed();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
+    // -------------- NOTES --------------
+    private void setupNotesTable() {
+        noteIdCol.setCellValueFactory(cellData -> 
+            new javafx.beans.property.SimpleIntegerProperty(cellData.getValue().getNoteId()));
+        noteSessionCol.setCellValueFactory(cellData -> 
+            new javafx.beans.property.SimpleIntegerProperty(cellData.getValue().getSessionId()));
+        noteTextCol.setCellValueFactory(cellData -> 
+            new javafx.beans.property.SimpleStringProperty(cellData.getValue().getNoteText()));
+
+        loadNotesData();
+    }
+
+    private void loadNotesData() {
+        List<Notes> notesList = sessionLogDAO.getAllNotes();
+        notesTable.getItems().setAll(notesList);
+    }
+
+    @FXML
+    private void handleAddNote() {
+        Notes newNote = new Notes(0, 1, "New Note"); 
+
+        boolean confirmed = showNoteForm(newNote);
+        if (confirmed) {
+            sessionLogDAO.insertNote(newNote);
+            loadNotesData();
+        }
+    }
+
+    @FXML
+    private void handleEditNote() {
+        Notes selectedNote = notesTable.getSelectionModel().getSelectedItem();
+        if (selectedNote == null) {
+            showAlert("No Note Selected", "Please select a note to edit.");
+            return;
+        }
+
+        boolean confirmed = showNoteForm(selectedNote);
+        if (confirmed) {
+            sessionLogDAO.updateNote(selectedNote);
+            loadNotesData();
+        }
+    }
+
+    @FXML
+    private void handleDeleteNote() {
+        Notes selectedNote = notesTable.getSelectionModel().getSelectedItem();
+        if (selectedNote == null) {
+            showAlert("No Note Selected", "Please select a note to delete.");
+            return;
+        }
+
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, 
+            "Are you sure you want to delete this note?",
+            ButtonType.YES, ButtonType.NO);
+        alert.showAndWait();
+
+        if (alert.getResult() == ButtonType.YES) {
+            sessionLogDAO.deleteNote(selectedNote.getNoteId());
+            loadNotesData();
+        }
+    }
+
+
+    // -------------- SUMMARIES --------------
+    private void setupSummariesTable() {
+        summaryIdCol.setCellValueFactory(cellData ->
+            new javafx.beans.property.SimpleIntegerProperty(cellData.getValue().getSummaryId()));
+        summarySessionCol.setCellValueFactory(cellData ->
+            new javafx.beans.property.SimpleIntegerProperty(cellData.getValue().getSessionId()));
+        summaryTextCol.setCellValueFactory(cellData ->
+            new javafx.beans.property.SimpleStringProperty(cellData.getValue().getSummaryText()));
+
+        loadSummariesData();
+    }
+
+    private void loadSummariesData() {
+        List<SummaryOfEvents> summaries = sessionLogDAO.getAllSummaries();
+        summaryTable.getItems().setAll(summaries);
+    }
+
+    @FXML
+    private void handleAddSummary() {
+        SummaryOfEvents newSummary = new SummaryOfEvents(0, 1, "New Summary");
+        boolean confirmed = showSummaryForm(newSummary);
+        if (confirmed) {
+            sessionLogDAO.insertSummaryOfEvents(newSummary);
+            loadSummariesData();
+        }
+    }
+
+    @FXML
+    private void handleEditSummary() {
+        SummaryOfEvents selectedSummary = summaryTable.getSelectionModel().getSelectedItem();
+        if (selectedSummary == null) {
+            showAlert("No Summary Selected", "Please select a summary to edit.");
+            return;
+        }
+
+        boolean confirmed = showSummaryForm(selectedSummary);
+        if (confirmed) {
+            sessionLogDAO.updateSummaryOfEvents(selectedSummary);
+            loadSummariesData();
+        }
+    }
+
+    @FXML
+    private void handleDeleteSummary() {
+        SummaryOfEvents selectedSummary = summaryTable.getSelectionModel().getSelectedItem();
+        if (selectedSummary == null) {
+            showAlert("No Summary Selected", "Please select a summary to delete.");
+            return;
+        }
+
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION,
+            "Are you sure you want to delete this summary?",
+            ButtonType.YES, ButtonType.NO);
+        alert.showAndWait();
+
+        if (alert.getResult() == ButtonType.YES) {
+            sessionLogDAO.deleteSummaryOfEvents(selectedSummary.getSummaryId());
+            loadSummariesData();
+        }
+    }
+
+    
 
     // -------------------- UTILITIES --------------------
 
