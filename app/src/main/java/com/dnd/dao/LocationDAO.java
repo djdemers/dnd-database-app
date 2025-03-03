@@ -29,7 +29,7 @@ public class LocationDAO {
             ResultSet rs = checkExistingStmt.executeQuery();
 
             if (rs.next()) {
-                System.out.println("Location already exists with ID: " + rs.getInt(1));
+                System.out.println("Location created with ID: " + rs.getInt(1));
                 return rs.getInt(1);
             }
 
