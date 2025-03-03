@@ -9,9 +9,10 @@ import com.dnd.dao.SessionLogDAO;
 import com.dnd.model.DNDCharacter;
 import com.dnd.model.Item;
 import com.dnd.model.Location;
+import com.dnd.model.Notes;
 import com.dnd.model.Quest;
 import com.dnd.model.SessionLog;
-import com.mysql.cj.Session;
+import com.dnd.model.SummaryOfEvents;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -62,6 +63,18 @@ public class MainMenuController {
     @FXML private TableColumn<SessionLog, String> sessionLogTimeStamp;
     @FXML private TableColumn<SessionLog, String> sessionLogInfoText;
 
+    // -------------------- NOTES --------------------
+    @FXML private TableView<Notes> notesTable;
+    @FXML private TableColumn<Notes, Number> noteIdCol;
+    @FXML private TableColumn<Notes, Number> noteSessionCol;
+    @FXML private TableColumn<Notes, String> noteTextCol;
+
+    // -------------------- SUMMARIES --------------------
+    @FXML private TableView<SummaryOfEvents> summaryTable;
+    @FXML private TableColumn<SummaryOfEvents, Number> summaryIdCol;
+    @FXML private TableColumn<SummaryOfEvents, Number> summarySessionCol;
+    @FXML private TableColumn<SummaryOfEvents, String> summaryTextCol;
+
     private final CharacterDAO characterDAO = new CharacterDAO();
     private final ItemDAO itemDAO = new ItemDAO();
     private final LocationDAO locationDAO = new LocationDAO();
@@ -79,6 +92,8 @@ public class MainMenuController {
         setupLocationTable();
         setupQuestTable();
         setupSessionLogTable();
+        setupNotesTable();
+        setupSummariesTable();
     }
 
     // -------------------- CHARACTER MANAGEMENT --------------------
@@ -324,14 +339,12 @@ public class MainMenuController {
 
     // Setup SessionLog Table
     private void setupSessionLogTable() {
-        // Map the table columns to the SessionLog properties
         sessionLogIdCol.setCellValueFactory(
             cellData -> new javafx.beans.property.SimpleIntegerProperty(
                 cellData.getValue().getSessionId()
             )
         );
     
-        // Display timestamp as string
         sessionLogTimeStamp.setCellValueFactory(
                 cellData -> {
                     if (cellData.getValue().getTimestamp() != null) {
@@ -362,16 +375,11 @@ public class MainMenuController {
     // Handle Add SessionLog
     @FXML
     private void handleAddSessionLog() {
-        // Create a new SessionLog with minimal default data
-        // e.g., sessionId = 0 to indicate a new record
         SessionLog newLog = new SessionLog(0, "New Session Log");
         
-        // Show the form/dialog if you have one:
         boolean confirmed = showSessionLogForm(newLog);
         if (confirmed) {
-            // Insert into DB
             sessionLogDAO.insertSessionLog(newLog);
-            // Refresh table
             loadSessionLogData();
         }
     }
@@ -426,7 +434,6 @@ public class MainMenuController {
             dialogStage.initModality(Modality.WINDOW_MODAL);
             dialogStage.setScene(scene);
     
-            // Retrieve the controller from the loader
             SessionLogFormController controller = loader.getController();
             controller.setDialogStage(dialogStage);
             controller.setSessionLog(sessionLog);
@@ -438,7 +445,177 @@ public class MainMenuController {
             return false;
         }
     }
+
+    // Show Note Form
+    private boolean showNoteForm(Notes note) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/dnd/ui/NotesForm.fxml"));
+            Scene scene = new Scene(loader.load());
     
+            Stage dialogStage = new Stage();
+            dialogStage.setTitle("Note Editor");
+            dialogStage.initModality(Modality.WINDOW_MODAL);
+            dialogStage.setScene(scene);
+    
+            NotesFormController controller = loader.getController();
+            controller.setDialogStage(dialogStage);
+            controller.setNote(note);
+    
+            dialogStage.showAndWait();
+            return controller.isConfirmed();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
+    // Show Summary Form
+    private boolean showSummaryForm(SummaryOfEvents summary) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/dnd/ui/SummaryForm.fxml"));
+            Scene scene = new Scene(loader.load());
+    
+            Stage dialogStage = new Stage();
+            dialogStage.setTitle("Summary Editor");
+            dialogStage.initModality(Modality.WINDOW_MODAL);
+            dialogStage.setScene(scene);
+    
+            SummaryFormController controller = loader.getController();
+            controller.setDialogStage(dialogStage);
+            controller.setSummary(summary);
+    
+            dialogStage.showAndWait();
+            return controller.isConfirmed();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
+    // -------------- NOTES --------------
+    private void setupNotesTable() {
+        noteIdCol.setCellValueFactory(cellData -> 
+            new javafx.beans.property.SimpleIntegerProperty(cellData.getValue().getNoteId()));
+        noteSessionCol.setCellValueFactory(cellData -> 
+            new javafx.beans.property.SimpleIntegerProperty(cellData.getValue().getSessionId()));
+        noteTextCol.setCellValueFactory(cellData -> 
+            new javafx.beans.property.SimpleStringProperty(cellData.getValue().getNoteText()));
+
+        loadNotesData();
+    }
+
+    private void loadNotesData() {
+        List<Notes> notesList = sessionLogDAO.getAllNotes();
+        notesTable.getItems().setAll(notesList);
+    }
+
+    @FXML
+    private void handleAddNote() {
+        Notes newNote = new Notes(0, 1, "New Note"); 
+
+        boolean confirmed = showNoteForm(newNote);
+        if (confirmed) {
+            sessionLogDAO.insertNote(newNote);
+            loadNotesData();
+        }
+    }
+
+    @FXML
+    private void handleEditNote() {
+        Notes selectedNote = notesTable.getSelectionModel().getSelectedItem();
+        if (selectedNote == null) {
+            showAlert("No Note Selected", "Please select a note to edit.");
+            return;
+        }
+
+        boolean confirmed = showNoteForm(selectedNote);
+        if (confirmed) {
+            sessionLogDAO.updateNote(selectedNote);
+            loadNotesData();
+        }
+    }
+
+    @FXML
+    private void handleDeleteNote() {
+        Notes selectedNote = notesTable.getSelectionModel().getSelectedItem();
+        if (selectedNote == null) {
+            showAlert("No Note Selected", "Please select a note to delete.");
+            return;
+        }
+
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, 
+            "Are you sure you want to delete this note?",
+            ButtonType.YES, ButtonType.NO);
+        alert.showAndWait();
+
+        if (alert.getResult() == ButtonType.YES) {
+            sessionLogDAO.deleteNote(selectedNote.getNoteId());
+            loadNotesData();
+        }
+    }
+
+
+    // -------------- SUMMARIES --------------
+    private void setupSummariesTable() {
+        summaryIdCol.setCellValueFactory(cellData ->
+            new javafx.beans.property.SimpleIntegerProperty(cellData.getValue().getSummaryId()));
+        summarySessionCol.setCellValueFactory(cellData ->
+            new javafx.beans.property.SimpleIntegerProperty(cellData.getValue().getSessionId()));
+        summaryTextCol.setCellValueFactory(cellData ->
+            new javafx.beans.property.SimpleStringProperty(cellData.getValue().getSummaryText()));
+
+        loadSummariesData();
+    }
+
+    private void loadSummariesData() {
+        List<SummaryOfEvents> summaries = sessionLogDAO.getAllSummaries();
+        summaryTable.getItems().setAll(summaries);
+    }
+
+    @FXML
+    private void handleAddSummary() {
+        SummaryOfEvents newSummary = new SummaryOfEvents(0, 1, "New Summary");
+        boolean confirmed = showSummaryForm(newSummary);
+        if (confirmed) {
+            sessionLogDAO.insertSummaryOfEvents(newSummary);
+            loadSummariesData();
+        }
+    }
+
+    @FXML
+    private void handleEditSummary() {
+        SummaryOfEvents selectedSummary = summaryTable.getSelectionModel().getSelectedItem();
+        if (selectedSummary == null) {
+            showAlert("No Summary Selected", "Please select a summary to edit.");
+            return;
+        }
+
+        boolean confirmed = showSummaryForm(selectedSummary);
+        if (confirmed) {
+            sessionLogDAO.updateSummaryOfEvents(selectedSummary);
+            loadSummariesData();
+        }
+    }
+
+    @FXML
+    private void handleDeleteSummary() {
+        SummaryOfEvents selectedSummary = summaryTable.getSelectionModel().getSelectedItem();
+        if (selectedSummary == null) {
+            showAlert("No Summary Selected", "Please select a summary to delete.");
+            return;
+        }
+
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION,
+            "Are you sure you want to delete this summary?",
+            ButtonType.YES, ButtonType.NO);
+        alert.showAndWait();
+
+        if (alert.getResult() == ButtonType.YES) {
+            sessionLogDAO.deleteSummaryOfEvents(selectedSummary.getSummaryId());
+            loadSummariesData();
+        }
+    }
+
     
 
     // -------------------- UTILITIES --------------------

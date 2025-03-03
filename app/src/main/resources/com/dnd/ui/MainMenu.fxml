@@ -98,6 +98,41 @@
                 </VBox>
             </Tab>
 
+            <Tab text="Notes" closable="false">
+                <VBox spacing="10" style="-fx-padding: 10;">
+                    <TableView fx:id="notesTable">
+                        <columns>
+                            <TableColumn fx:id="noteIdCol" text="ID" />
+                            <TableColumn fx:id="noteSessionCol" text="Session ID" />
+                            <TableColumn fx:id="noteTextCol" text="Note Text" />
+                        </columns>
+                    </TableView>
+                    <HBox spacing="10">
+                        <Button text="Add" onAction="#handleAddNote"/>
+                        <Button text="Edit" onAction="#handleEditNote"/>
+                        <Button text="Delete" onAction="#handleDeleteNote"/>
+                    </HBox>
+                </VBox>
+            </Tab>
+
+            <Tab text="Summaries" closable="false">
+                <VBox spacing="10" style="-fx-padding: 10;">
+                    <TableView fx:id="summaryTable">
+                        <columns>
+                            <TableColumn fx:id="summaryIdCol" text="ID" />
+                            <TableColumn fx:id="summarySessionCol" text="Session ID" />
+                            <TableColumn fx:id="summaryTextCol" text="Summary Text" />
+                        </columns>
+                    </TableView>
+                    <HBox spacing="10">
+                        <Button text="Add" onAction="#handleAddSummary"/>
+                        <Button text="Edit" onAction="#handleEditSummary"/>
+                        <Button text="Delete" onAction="#handleDeleteSummary"/>
+                    </HBox>
+                </VBox>
+            </Tab>
+
+
         </TabPane>
     </center>
 

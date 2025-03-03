@@ -23,16 +23,14 @@ public class SessionLogDAO {
         try {
             conn = DatabaseConnector.getConnection();
     
-            // Insert only INFO_TEXT (and optionally TIME_STAMP) so ID auto-increments
             String query = "INSERT INTO SESSION_LOG (INFO_TEXT) VALUES (?)";
             stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
             stmt.setString(1, log.getInfoText());
             stmt.executeUpdate();
     
-            // If you want to retrieve the newly generated ID:
             generatedKeys = stmt.getGeneratedKeys();
             if (generatedKeys.next()) {
-                int newId = generatedKeys.getInt(1); // or "SESSLOG_ID"
+                int newId = generatedKeys.getInt(1); 
                 log.setSessionId(newId);
             }
         } catch (SQLException e) {
@@ -143,11 +141,10 @@ public class SessionLogDAO {
 
         try {
             conn = DatabaseConnector.getConnection();
-            String query = "INSERT INTO NOTES (NOTE_ID, SESSLOG, NOTE) VALUES (?, ?, ?)";
+            String query = "INSERT INTO NOTES (SESSLOG, NOTE) VALUES (?, ?)";
             stmt = conn.prepareStatement(query);
-            stmt.setInt(1, note.getNoteId());
-            stmt.setInt(2, note.getSessionId());
-            stmt.setString(3, note.getNoteText());
+            stmt.setInt(1, note.getSessionId());
+            stmt.setString(2, note.getNoteText());
 
             stmt.executeUpdate();
         } catch (SQLException e) {
@@ -287,11 +284,10 @@ public class SessionLogDAO {
 
         try {
             conn = DatabaseConnector.getConnection();
-            String query = "INSERT INTO SUMMARY_OF_EVENTS (SUMMARY_ID, SESSLOG, SUMMARY) VALUES (?, ?, ?)";
+            String query = "INSERT INTO SUMMARY_OF_EVENTS (SESSLOG, SUMMARY) VALUES (?, ?)";
             stmt = conn.prepareStatement(query);
-            stmt.setInt(1, summary.getSummaryId());
-            stmt.setInt(2, summary.getSessionId());
-            stmt.setString(3, summary.getSummaryText());
+            stmt.setInt(1, summary.getSessionId());
+            stmt.setString(2, summary.getSummaryText());
 
             stmt.executeUpdate();
         } catch (SQLException e) {

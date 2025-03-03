@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml/1" 
+            fx:controller="com.dnd.ui.SummaryFormController">
+
+    <center>
+        <VBox spacing="10" alignment="CENTER" style="-fx-padding: 20;">
+            <Label text="Summary Editor" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+
+            <GridPane hgap="10" vgap="10">
+                <Label text="Summary ID:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                <TextField fx:id="summaryIdField" editable="false"
+                           GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                <Label text="Session ID:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                <TextField fx:id="sessionIdField" 
+                           GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                <Label text="Summary Text:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                <TextArea fx:id="summaryTextArea" prefRowCount="3"
+                          GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+            </GridPane>
+
+            <HBox spacing="10">
+                <Button text="Save" onAction="#handleSave"/>
+                <Button text="Cancel" onAction="#handleCancel"/>
+            </HBox>
+        </VBox>
+    </center>
+</BorderPane>
