@@ -1,57 +1,82 @@
 package com.dnd.app;
 
+import com.dnd.model.DNDCharacter;
+import com.dnd.ui.CharacterFormController;
 import com.dnd.ui.DatabaseLoginController;
+import com.dnd.ui.MainMenuController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-public class App extends Application {
+import java.io.IOException;
 
+public class App extends Application {
     private Stage primaryStage;
 
     @Override
     public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;
-
-        boolean connected = showDatabaseLoginDialog();
-        if (connected) {
-            System.out.println("Database connection successful! Launching main menu if it was actually available");
-            // TODO: Load the main application menu here
-        } else {
-            System.out.println("Connection failed or canceled by user.");
-        }
+        showDatabaseLoginDialog();
     }
 
-    /**
-     * Shows the login dialog for database credentials.
-     * @return true if login was successful, false if canceled or failed.
-     */
-    private boolean showDatabaseLoginDialog() {
+    public void showDatabaseLoginDialog() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/dnd/ui/DatabaseLogin.fxml"));
-            Stage dialogStage = new Stage();
-            dialogStage.setTitle("Database Login");
-            dialogStage.initModality(Modality.WINDOW_MODAL);
-            dialogStage.initOwner(primaryStage);
             Scene scene = new Scene(loader.load());
-            dialogStage.setScene(scene);
 
-            // Get the controller and set up the stage
+            // Set controller reference
             DatabaseLoginController controller = loader.getController();
-            controller.setDialogStage(dialogStage);
+            controller.setApp(this);
 
-            dialogStage.showAndWait();
-            return controller.isConfirmed();
-
+            primaryStage.setScene(scene);
+            primaryStage.setTitle("Database Login");
+            primaryStage.show();
         } catch (Exception e) {
             e.printStackTrace();
-            return false;
         }
     }
 
+    public void showMainMenu() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/dnd/ui/MainMenu.fxml"));
+            Scene scene = new Scene(loader.load());
+
+            // Set controller reference
+            MainMenuController controller = loader.getController();
+            controller.setApp(this); // Allows navigation back to login
+
+            primaryStage.setScene(scene);
+            primaryStage.setTitle("D&D Database - Main Menu");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void showCharacterForm(DNDCharacter character) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/dnd/ui/CharacterForm.fxml"));
+            Scene scene = new Scene(loader.load());
+
+            Stage dialogStage = new Stage();
+            dialogStage.setTitle("Character Editor");
+            dialogStage.initModality(Modality.WINDOW_MODAL);
+            dialogStage.setScene(scene);
+
+            CharacterFormController controller = loader.getController();
+            controller.setDialogStage(dialogStage);
+            controller.setCharacter(character);
+
+            dialogStage.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
     public static void main(String[] args) {
-        launch(args);  // Launch JavaFX application
+        launch(args);
     }
 }
+

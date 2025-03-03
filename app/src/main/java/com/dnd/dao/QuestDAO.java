@@ -24,8 +24,8 @@ public class QuestDAO {
             stmt = conn.prepareStatement(query);
             stmt.setInt(1, quest.getId());
             stmt.setString(2, quest.getName());
-            stmt.setString(3, quest.getInfo_text());
-            stmt.setInt(4, quest.getExp_gain());
+            stmt.setString(3, quest.getInfoText());
+            stmt.setInt(4, quest.getExpGain());
             stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();

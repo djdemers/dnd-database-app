@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.*?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.dnd.ui.CharacterFormController">
+
+    <top>
+        <Label text="Character Editor" style="-fx-font-size: 24px; -fx-padding: 10px; -fx-font-weight: bold;"/>
+    </top>
+
+    <center>
+        <GridPane hgap="10" vgap="10">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+            <columnConstraints>
+                <ColumnConstraints halignment="RIGHT"/>
+                <ColumnConstraints hgrow="ALWAYS"/>
+            </columnConstraints>
+
+            <!-- ID (Readonly) -->
+            <Label text="ID:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+            <TextField fx:id="charIdField" editable="false" visible="false" managed="false" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+            <!-- Name -->
+            <Label text="Name:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+            <TextField fx:id="charNameField" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+            <!-- Race -->
+            <Label text="Race:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+            <ComboBox fx:id="charRaceBox" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+            <!-- Class -->
+            <Label text="Class:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+            <ComboBox fx:id="charClassBox" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+
+            <!-- Alignment -->
+            <Label text="Alignment:" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+            <ComboBox fx:id="charAlignmentBox" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+
+            <!-- Background -->
+            <Label text="Background:" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
+            <TextField fx:id="charBackgroundField" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
+
+            <!-- Level -->
+            <Label text="Level:" GridPane.rowIndex="6" GridPane.columnIndex="0"/>
+            <TextField fx:id="charLevelField" GridPane.rowIndex="6" GridPane.columnIndex="1"/>
+
+            <!-- NPC (Checkbox) -->
+            <Label text="NPC:" GridPane.rowIndex="7" GridPane.columnIndex="0"/>
+            <CheckBox fx:id="charNpcCheckBox" GridPane.rowIndex="7" GridPane.columnIndex="1"/>
+
+            <!-- Stats -->
+            <Label text="Strength:" GridPane.rowIndex="8" GridPane.columnIndex="0"/>
+            <TextField fx:id="charStrengthField" GridPane.rowIndex="8" GridPane.columnIndex="1"/>
+
+            <Label text="Dexterity:" GridPane.rowIndex="9" GridPane.columnIndex="0"/>
+            <TextField fx:id="charDexterityField" GridPane.rowIndex="9" GridPane.columnIndex="1"/>
+
+            <Label text="Constitution:" GridPane.rowIndex="10" GridPane.columnIndex="0"/>
+            <TextField fx:id="charConstitutionField" GridPane.rowIndex="10" GridPane.columnIndex="1"/>
+
+            <Label text="Intelligence:" GridPane.rowIndex="11" GridPane.columnIndex="0"/>
+            <TextField fx:id="charIntelligenceField" GridPane.rowIndex="11" GridPane.columnIndex="1"/>
+
+            <Label text="Wisdom:" GridPane.rowIndex="12" GridPane.columnIndex="0"/>
+            <TextField fx:id="charWisdomField" GridPane.rowIndex="12" GridPane.columnIndex="1"/>
+
+            <Label text="Charisma:" GridPane.rowIndex="13" GridPane.columnIndex="0"/>
+            <TextField fx:id="charCharismaField" GridPane.rowIndex="13" GridPane.columnIndex="1"/>
+
+            <!-- Location -->
+            <Label text="Location:" GridPane.rowIndex="14" GridPane.columnIndex="0"/>
+            <ComboBox fx:id="charLocationBox" GridPane.rowIndex="14" GridPane.columnIndex="1"/>
+        </GridPane>
+    </center>
+
+    <bottom>
+        <HBox alignment="CENTER" spacing="15">
+            <padding>
+                <Insets top="10" right="10" bottom="10" left="10"/>
+            </padding>
+            <Button text="Save" onAction="#handleSave"/>
+            <Button text="Cancel" onAction="#handleCancel"/>
+        </HBox>
+    </bottom>
+</BorderPane>
+

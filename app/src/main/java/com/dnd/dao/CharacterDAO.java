@@ -12,71 +12,98 @@ public class CharacterDAO {
      * Insert a character into the database
      * @param character The character to insert
      */
-    public void insertCharacter(DNDCharacter character) {
-        // Use PreparedStatement to insert character into DND_CHARACTER table
+    public int insertCharacter(DNDCharacter character) {
         Connection conn = null;
         PreparedStatement stmt = null;
+        ResultSet generatedKeys = null;
+        int newId = -1;
+
         try {
             conn = DatabaseConnector.getConnection();
-            String insertStmt = "INSERT INTO DND_CHARACTER (CHAR_ID, CHAR_NAME, CHAR_RACE, CHAR_CLASS, CHAR_ALIGNMENT, CHAR_BACKGROUND, CHAR_LEVEL, NPC, STRENGTH, DEXTERITY, CONSTITUTION, INTELLIGENCE, WISDOM, CHARISMA, IS_IN) " +
-                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-            stmt = conn.prepareStatement(insertStmt);
-            // character Id
-            stmt.setInt(1, character.getId());
-            // character name
-            stmt.setString(2, character.getName());
-            // character race
-            stmt.setString(3, character.getRace());
-            // character class
-            stmt.setString(4, character.getCharacterClass());
-            // character alignment
-            if (character.getAlignment() == null) {
-                stmt.setNull(5, Types.VARCHAR);
-            } else {
-                stmt.setString(5, character.getAlignment());
-            }
-            // character background
-            if (character.getBackground() == null) {
-                stmt.setNull(6, Types.VARCHAR);
-            } else {
-                stmt.setString(6, character.getBackground());
-            }
-            // character level
-            stmt.setInt(7, character.getLevel());
-            // character isNpc
-            stmt.setBoolean(8, character.isNpc());
-            // character strength
-            stmt.setInt(9, character.getStrength());
-            // character dexterity
-            stmt.setInt(10, character.getDexterity());
-            // character constitution
-            stmt.setInt(11, character.getConstitution());
-            // character intelligence
-            stmt.setInt(12, character.getIntelligence());
-            // character wisdom
-            stmt.setInt(13, character.getWisdom());
-            // character charisma
-            stmt.setInt(14, character.getCharisma());
-            // character location ID
-            stmt.setInt(15, character.getLocation());
 
-            stmt.executeUpdate();
+            // Check if a character with the same name and race already exists
+            String checkStmt = "SELECT CHAR_ID FROM DND_CHARACTER WHERE CHAR_NAME = ? AND CHAR_RACE = ?";
+            PreparedStatement checkExistingStmt = conn.prepareStatement(checkStmt);
+            checkExistingStmt.setString(1, character.getName());
+            checkExistingStmt.setString(2, character.getRace());
+            ResultSet rs = checkExistingStmt.executeQuery();
 
+            if (rs.next()) {
+                System.out.println("Character already exists with ID: " + rs.getInt(1));
+                return rs.getInt(1);
+            }
+
+            // Insert new character
+            String insertStmt = "INSERT INTO DND_CHARACTER (CHAR_NAME, CHAR_RACE, CHAR_CLASS, CHAR_ALIGNMENT, CHAR_BACKGROUND, CHAR_LEVEL, NPC, STRENGTH, DEXTERITY, CONSTITUTION, INTELLIGENCE, WISDOM, CHARISMA, IS_IN) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+            stmt = conn.prepareStatement(insertStmt, Statement.RETURN_GENERATED_KEYS);
+
+            stmt.setString(1, character.getName());
+            stmt.setString(2, character.getRace());
+            stmt.setString(3, character.getCharacterClass());
+            stmt.setString(4, character.getAlignment());
+            stmt.setString(5, character.getBackground());
+            stmt.setInt(6, character.getLevel());
+            stmt.setBoolean(7, character.isNpc());
+            stmt.setInt(8, character.getStrength());
+            stmt.setInt(9, character.getDexterity());
+            stmt.setInt(10, character.getConstitution());
+            stmt.setInt(11, character.getIntelligence());
+            stmt.setInt(12, character.getWisdom());
+            stmt.setInt(13, character.getCharisma());
+            stmt.setInt(14, character.getLocation());
+
+            int affectedRows = stmt.executeUpdate();
+
+            if (affectedRows > 0) {
+                generatedKeys = stmt.getGeneratedKeys();
+                if (generatedKeys.next()) {
+                    newId = generatedKeys.getInt(1);
+                }
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
             try {
-                if (stmt != null) {
-                    stmt.close();
-                }
-                if (conn != null) {
-                    conn.close();
-                }
+                if (generatedKeys != null) generatedKeys.close();
+                if (stmt != null) stmt.close();
+                if (conn != null) conn.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
         }
+
+        return newId;
     }
+
+
+
+    /**
+     *  Get the next available character ID
+     */
+    private int getNextCharacterId(Connection conn) throws SQLException {
+        Statement stmt = null;
+        ResultSet rs = null;
+        int nextId = 1; // Default ID if the table is empty
+
+        try {
+            stmt = conn.createStatement();
+            rs = stmt.executeQuery("SELECT MAX(CHAR_ID) FROM DND_CHARACTER");
+
+            if (rs.next()) {
+                int maxId = rs.getInt(1);
+                if (!rs.wasNull()) {
+                    nextId = maxId + 1;
+                }
+            }
+        } finally {
+            if (rs != null) rs.close();
+            if (stmt != null) stmt.close();
+        }
+        return nextId;
+    }
+
 
     /**
      * Get all characters from the database
@@ -140,8 +167,42 @@ public class CharacterDAO {
      * @param updatedCharacter The updated character object
      */
     public void updateCharacter(DNDCharacter updatedCharacter) {
-        deleteCharacter(updatedCharacter.getId());
-        insertCharacter(updatedCharacter);
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        try {
+            conn = DatabaseConnector.getConnection();
+            String updateStmt = "UPDATE DND_CHARACTER SET CHAR_NAME = ?, CHAR_RACE = ?, CHAR_CLASS = ?, CHAR_ALIGNMENT = ?, " +
+                    "CHAR_BACKGROUND = ?, CHAR_LEVEL = ?, NPC = ?, STRENGTH = ?, DEXTERITY = ?, " +
+                    "CONSTITUTION = ?, INTELLIGENCE = ?, WISDOM = ?, CHARISMA = ?, IS_IN = ? WHERE CHAR_ID = ?";
+            stmt = conn.prepareStatement(updateStmt);
+
+            stmt.setString(1, updatedCharacter.getName());
+            stmt.setString(2, updatedCharacter.getRace());
+            stmt.setString(3, updatedCharacter.getCharacterClass());
+            stmt.setString(4, updatedCharacter.getAlignment());
+            stmt.setString(5, updatedCharacter.getBackground());
+            stmt.setInt(6, updatedCharacter.getLevel());
+            stmt.setBoolean(7, updatedCharacter.isNpc());
+            stmt.setInt(8, updatedCharacter.getStrength());
+            stmt.setInt(9, updatedCharacter.getDexterity());
+            stmt.setInt(10, updatedCharacter.getConstitution());
+            stmt.setInt(11, updatedCharacter.getIntelligence());
+            stmt.setInt(12, updatedCharacter.getWisdom());
+            stmt.setInt(13, updatedCharacter.getCharisma());
+            stmt.setInt(14, updatedCharacter.getLocation());
+            stmt.setInt(15, updatedCharacter.getId());
+
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (stmt != null) stmt.close();
+                if (conn != null) conn.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     /**
