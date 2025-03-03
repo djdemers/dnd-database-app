@@ -69,7 +69,8 @@ public class MainMenuController {
         setupQuestTable();
     }
 
-    // 🔹 Setup Characters Table
+    // -------------------- CHARACTER MANAGEMENT --------------------
+
     private void setupCharacterTable() {
         charIdCol.setCellValueFactory(new PropertyValueFactory<>("id"));
         charNameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
@@ -78,13 +79,11 @@ public class MainMenuController {
         loadCharacterData();
     }
 
-    // 🔹 Load Character Data
     private void loadCharacterData() {
         List<DNDCharacter> characters = characterDAO.getAllCharacters();
         characterTable.getItems().setAll(characters);
     }
 
-    // 🔹 Handle Adding a New Character
     @FXML
     private void handleAddCharacter() {
         DNDCharacter newCharacter = new DNDCharacter(0, "", "Human", "Warrior", "", "", 1, false, 10, 10, 10, 10, 10, 10, 1);
@@ -95,7 +94,6 @@ public class MainMenuController {
         }
     }
 
-    // 🔹 Handle Editing an Existing Character
     @FXML
     private void handleEditCharacter() {
         DNDCharacter selectedCharacter = characterTable.getSelectionModel().getSelectedItem();
@@ -110,7 +108,6 @@ public class MainMenuController {
         }
     }
 
-    // 🔹 Handle Deleting a Character
     @FXML
     private void handleDeleteCharacter() {
         DNDCharacter selectedCharacter = characterTable.getSelectionModel().getSelectedItem();
@@ -126,7 +123,6 @@ public class MainMenuController {
         }
     }
 
-    // 🔹 Show Character Form (Modal)
     private boolean showCharacterForm(DNDCharacter character) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/dnd/ui/CharacterForm.fxml"));
@@ -149,19 +145,8 @@ public class MainMenuController {
         }
     }
 
-    // 🔹 Utility: Show Alert Messages
-    private void showAlert(String title, String content) {
-        Alert alert = new Alert(Alert.AlertType.WARNING);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(content);
-        alert.showAndWait();
-    }
+    // -------------------- ITEM MANAGEMENT --------------------
 
-
-
-
-    // 🔹 Setup Items Table
     private void setupItemTable() {
         itemIdCol.setCellValueFactory(cellData -> cellData.getValue().idProperty());
         itemNameCol.setCellValueFactory(cellData -> cellData.getValue().itemNameProperty());
@@ -170,10 +155,94 @@ public class MainMenuController {
         loadItemData();
     }
 
-    // 🔹 Load Item Data
     private void loadItemData() {
         List<Item> items = itemDAO.getAllItems();
         itemTable.getItems().setAll(items);
+    }
+
+    @FXML
+    private void handleAddItem() {
+        Item newItem = new Item(0, "", "", "Common", "Weapon");  // Creates a new item with default values
+
+        boolean confirmed = showItemForm(newItem);
+
+        if (confirmed) {
+            if (newItem.getId() == 0) {
+                int newId = itemDAO.insertItem(newItem);
+                newItem.setId(newId);
+            }
+            loadItemData();
+        }
+    }
+
+    @FXML
+    private void handleEditItem() {
+        Item selectedItem = itemTable.getSelectionModel().getSelectedItem();
+        if (selectedItem == null) {
+            showAlert("No Item Selected", "Please select an item to edit.");
+            return;
+        }
+        boolean confirmed = showItemForm(selectedItem);
+        if (confirmed) {
+            itemDAO.updateItem(selectedItem);
+            loadItemData();
+        }
+    }
+
+    @FXML
+    private void handleDeleteItem() {
+        Item selectedItem = itemTable.getSelectionModel().getSelectedItem();
+        if (selectedItem == null) {
+            showAlert("No Item Selected", "Please select an item to delete.");
+            return;
+        }
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to delete this item?", ButtonType.YES, ButtonType.NO);
+        alert.showAndWait();
+        if (alert.getResult() == ButtonType.YES) {
+            itemDAO.deleteItem(selectedItem.getId());
+            loadItemData();
+        }
+    }
+
+    private boolean showItemForm(Item item) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/dnd/ui/ItemForm.fxml"));
+            Scene scene = new Scene(loader.load());
+
+            Stage dialogStage = new Stage();
+            dialogStage.setTitle("Item Editor");
+            dialogStage.initModality(Modality.WINDOW_MODAL);
+            dialogStage.setScene(scene);
+
+            ItemFormController controller = loader.getController();
+            controller.setDialogStage(dialogStage);
+            controller.setItem(item);
+
+            dialogStage.showAndWait();
+            return controller.isConfirmed();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    // -------------------- UTILITIES --------------------
+
+    private void showAlert(String title, String content) {
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.showAndWait();
+    }
+
+    @FXML
+    private void handleLogout() {
+        characterTable.getItems().clear();
+        itemTable.getItems().clear();
+        locationTable.getItems().clear();
+        questTable.getItems().clear();
+        app.showDatabaseLoginDialog();
     }
 
     private void setupLocationTable() {
@@ -198,15 +267,6 @@ public class MainMenuController {
     private void loadQuestData() {
         List<Quest> quests = questDAO.getAllQuests();
         questTable.getItems().setAll(quests);
-    }
-
-    @FXML
-    private void handleLogout() {
-        characterTable.getItems().clear();
-        itemTable.getItems().clear();
-        locationTable.getItems().clear();
-        questTable.getItems().clear();
-        app.showDatabaseLoginDialog();
     }
 
 }
