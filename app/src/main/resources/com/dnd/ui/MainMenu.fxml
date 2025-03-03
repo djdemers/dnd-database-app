@@ -74,9 +74,9 @@
                         </columns>
                     </TableView>
                     <HBox spacing="10">
-                        <!--<Button text="Add" onAction="#handleAddQuest"/>
+                        <Button text="Add" onAction="#handleAddQuest"/>
                         <Button text="Edit" onAction="#handleEditQuest"/>
-                        <Button text="Delete" onAction="#handleDeleteQuest"/>-->
+                        <Button text="Delete" onAction="#handleDeleteQuest"/>
                     </HBox>
                 </VBox>
             </Tab>

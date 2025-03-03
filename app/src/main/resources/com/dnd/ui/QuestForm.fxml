@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.collections.FXCollections?>
+
+<?import java.lang.String?>
+<GridPane xmlns:fx="http://javafx.com/fxml"
+          fx:controller="com.dnd.ui.QuestFormController"
+          alignment="TOP_LEFT"
+          hgap="10"
+          vgap="10">
+
+    <padding>
+        <Insets top="10" right="10" bottom="10" left="10"/>
+    </padding>
+
+    <!-- Quest Fields -->
+    <Label text="Quest ID:" GridPane.rowIndex="0" GridPane.columnIndex="0" />
+    <TextField fx:id="questIdField" GridPane.rowIndex="0" GridPane.columnIndex="1" />
+
+    <Label text="Quest Name:" GridPane.rowIndex="1" GridPane.columnIndex="0" />
+    <TextField fx:id="questNameField" GridPane.rowIndex="1" GridPane.columnIndex="1" />
+
+    <Label text="Quest Info:" GridPane.rowIndex="2" GridPane.columnIndex="0" />
+    <TextArea fx:id="questInfoField" prefRowCount="3"
+              GridPane.rowIndex="2" GridPane.columnIndex="1" />
+
+    <Label text="Quest EXP:" GridPane.rowIndex="3" GridPane.columnIndex="0" />
+    <TextField fx:id="questExpField" GridPane.rowIndex="3" GridPane.columnIndex="1" />
+
+    <!-- Objective Status (ComboBox) -->
+    <Label text="Objective Status:" GridPane.rowIndex="4" GridPane.columnIndex="0" />
+    <ComboBox fx:id="objectiveStatusComboBox" GridPane.rowIndex="4" GridPane.columnIndex="1">
+        <items>
+            <!-- Here we define the initial list of statuses -->
+            <FXCollections fx:factory="observableArrayList">
+                <String fx:value="Undiscovered" />
+                <String fx:value="In Progress" />
+                <String fx:value="Completed" />
+                <String fx:value="Failed" />
+            </FXCollections>
+        </items>
+    </ComboBox>
+
+    <!-- Objective Info -->
+    <Label text="Objective Info:" GridPane.rowIndex="5" GridPane.columnIndex="0" />
+    <TextArea fx:id="objectiveInfoField" prefRowCount="2"
+              GridPane.rowIndex="5" GridPane.columnIndex="1" />
+
+    <!-- Add Objective Button -->
+    <Button fx:id="addObjectiveButton"
+            text="Add Objective"
+            onAction="#handleAddObjective"
+            GridPane.rowIndex="6"
+            GridPane.columnIndex="1" />
+
+    <!-- Objectives Table -->
+    <TableView fx:id="objectivesTable"
+               GridPane.rowIndex="7"
+               GridPane.columnIndex="0"
+               GridPane.columnSpan="2">
+        <columns>
+            <TableColumn fx:id="statusColumn" text="Status" prefWidth="100" />
+            <TableColumn fx:id="descriptionColumn" text="Description" prefWidth="200" />
+        </columns>
+    </TableView>
+
+    <!-- Save/Cancel Buttons -->
+    <HBox spacing="10" GridPane.rowIndex="8" GridPane.columnIndex="0" GridPane.columnSpan="2">
+        <Button text="Save" onAction="#handleSave" />
+        <Button text="Cancel" onAction="#handleCancel" />
+    </HBox>
+
+</GridPane>
+
+

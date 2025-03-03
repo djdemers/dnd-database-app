@@ -334,6 +334,80 @@ public class MainMenuController {
         }
     }
 
+    // -------------------- QUEST MANAGEMENT --------------------
+
+    private void setupQuestTable() {
+        questIdCol.setCellValueFactory(cellData -> cellData.getValue().idProperty());
+        questNameCol.setCellValueFactory(cellData -> cellData.getValue().nameProperty());
+        questExpCol.setCellValueFactory(cellData -> cellData.getValue().expGainProperty());
+        loadQuestData();
+    }
+
+    private void loadQuestData() {
+        List<Quest> quests = questDAO.getAllQuests();
+        questTable.getItems().setAll(quests);
+    }
+
+    @FXML
+    private void handleAddQuest() {
+        Quest newQuest = new Quest(0, "", "", 0);
+        boolean confirmed = showQuestForm(newQuest);
+        if (confirmed) {
+            questDAO.insertQuest(newQuest);
+            loadQuestData();
+        }
+    }
+
+    @FXML
+    private void handleEditQuest() {
+        Quest selectedQuest = questTable.getSelectionModel().getSelectedItem();
+        if (selectedQuest == null) {
+            showAlert("No Quest Selected", "Please select a quest to edit.");
+            return;
+        }
+        boolean confirmed = showQuestForm(selectedQuest);
+        if (confirmed) {
+            questDAO.updateQuest(selectedQuest);
+            loadQuestData();
+        }
+    }
+
+    @FXML
+    private void handleDeleteQuest() {
+        Quest selectedQuest = questTable.getSelectionModel().getSelectedItem();
+        if (selectedQuest == null) {
+            showAlert("No Quest Selected", "Please select a quest to delete.");
+            return;
+        }
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to delete this quest?", ButtonType.YES, ButtonType.NO);
+        alert.showAndWait();
+        if (alert.getResult() == ButtonType.YES) {
+            questDAO.deleteQuest(selectedQuest.getId());
+            loadQuestData();
+        }
+    }
+
+    private boolean showQuestForm(Quest quest) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/dnd/ui/QuestForm.fxml"));
+            Scene scene = new Scene(loader.load());
+
+            Stage dialogStage = new Stage();
+            dialogStage.setTitle("Quest Editor");
+            dialogStage.initModality(Modality.WINDOW_MODAL);
+            dialogStage.setScene(scene);
+
+            QuestFormController controller = loader.getController();
+            controller.setDialogStage(dialogStage);
+            controller.setQuest(quest);
+
+            dialogStage.showAndWait();
+            return controller.isConfirmed();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 
     // -------------------- SESSION LOG MANAGEMENT --------------------
 
@@ -635,18 +709,6 @@ public class MainMenuController {
         locationTable.getItems().clear();
         questTable.getItems().clear();
         app.showDatabaseLoginDialog();
-    }
-
-    private void setupQuestTable() {
-        questIdCol.setCellValueFactory(cellData -> cellData.getValue().idProperty());
-        questNameCol.setCellValueFactory(cellData -> cellData.getValue().nameProperty());
-        questExpCol.setCellValueFactory(cellData -> cellData.getValue().expGainProperty());
-        loadQuestData();
-    }
-
-    private void loadQuestData() {
-        List<Quest> quests = questDAO.getAllQuests();
-        questTable.getItems().setAll(quests);
     }
 
 }
