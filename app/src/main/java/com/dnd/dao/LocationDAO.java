@@ -12,34 +12,57 @@ public class LocationDAO {
      * Insert a new location into the database.
      * @param location The location to insert.
      */
-    public void insertLocation(Location location) {
-        // Use PreparedStatement to insert location
+    public int insertLocation(Location location) {
         Connection conn = null;
         PreparedStatement stmt = null;
+        ResultSet generatedKeys = null;
+        int newId = -1;
+
         try {
             conn = DatabaseConnector.getConnection();
-            String query = "INSERT INTO LOCATION (LOC_ID, LOC_NAME, LOC_TYPE, INFO_TEXT) VALUES (?, ?, ?, ?)";
-            stmt = conn.prepareStatement(query);
-            stmt.setInt(1, location.getId());
-            stmt.setString(2, location.getName());
-            stmt.setString(3, location.getType());
-            stmt.setString(4, location.getInfoText());
-            stmt.executeUpdate();
+
+            // Check if a location with the same name and type already exists
+            String checkStmt = "SELECT LOC_ID FROM LOCATION WHERE LOC_NAME = ? AND LOC_TYPE = ?";
+            PreparedStatement checkExistingStmt = conn.prepareStatement(checkStmt);
+            checkExistingStmt.setString(1, location.getName());
+            checkExistingStmt.setString(2, location.getType());
+            ResultSet rs = checkExistingStmt.executeQuery();
+
+            if (rs.next()) {
+                System.out.println("Location already exists with ID: " + rs.getInt(1));
+                return rs.getInt(1);
+            }
+
+            // Insert new location
+            String insertStmt = "INSERT INTO LOCATION (LOC_NAME, LOC_TYPE, INFO_TEXT) VALUES (?, ?, ?)";
+            stmt = conn.prepareStatement(insertStmt, Statement.RETURN_GENERATED_KEYS);
+            stmt.setString(1, location.getName());
+            stmt.setString(2, location.getType());
+            stmt.setString(3, location.getInfoText());
+
+            int affectedRows = stmt.executeUpdate();
+
+            if (affectedRows > 0) {
+                generatedKeys = stmt.getGeneratedKeys();
+                if (generatedKeys.next()) {
+                    newId = generatedKeys.getInt(1);
+                }
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
             try {
-                if (stmt != null) {
-                    stmt.close();
-                }
-                if (conn != null) {
-                    conn.close();
-                }
+                if (generatedKeys != null) generatedKeys.close();
+                if (stmt != null) stmt.close();
+                if (conn != null) conn.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
         }
+
+        return newId;
     }
+
 
     /**
      * Get all locations from the database.
