@@ -81,6 +81,23 @@
                 </VBox>
             </Tab>
 
+            <Tab text="Session Logs" closable="false">
+                <VBox spacing="10" style="-fx-padding: 10;">
+                    <TableView fx:id="sessionLogTable">
+                        <columns>
+                            <TableColumn fx:id="sessionLogIdCol" text="ID" />
+                            <TableColumn fx:id="sessionLogTimeStamp" text="Timestamp" />
+                            <TableColumn fx:id="sessionLogInfoText" text="Info" />
+                        </columns>
+                    </TableView>
+                    <HBox spacing="10">
+                        <Button text="Add" onAction="#handleAddSessionLog"/>
+                        <Button text="Edit" onAction="#handleEditSessionLog"/>
+                        <Button text="Delete" onAction="#handleDeleteSessionLog"/>
+                    </HBox>
+                </VBox>
+            </Tab>
+
         </TabPane>
     </center>
 

@@ -18,22 +18,30 @@ public class SessionLogDAO {
     public void insertSessionLog(SessionLog log) {
         Connection conn = null;
         PreparedStatement stmt = null;
-
+        ResultSet generatedKeys = null;
+    
         try {
             conn = DatabaseConnector.getConnection();
-            String query = "INSERT INTO SESSION_LOG (SESSLOG_ID, , INFO_TEXT) VALUES (?, ?)";
-            stmt = conn.prepareStatement(query);
-            // Relying on default for timestamp
-            stmt.setInt(1, log.getSessionId()); 
-            stmt.setString(2, log.getInfoText());
-
+    
+            // Insert only INFO_TEXT (and optionally TIME_STAMP) so ID auto-increments
+            String query = "INSERT INTO SESSION_LOG (INFO_TEXT) VALUES (?)";
+            stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+            stmt.setString(1, log.getInfoText());
             stmt.executeUpdate();
+    
+            // If you want to retrieve the newly generated ID:
+            generatedKeys = stmt.getGeneratedKeys();
+            if (generatedKeys.next()) {
+                int newId = generatedKeys.getInt(1); // or "SESSLOG_ID"
+                log.setSessionId(newId);
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            closeResources(conn, stmt, null);
+            closeResources(conn, stmt, generatedKeys);
         }
     }
+    
 
     public List<SessionLog> getAllSessionLogs() {
         List<SessionLog> logs = new ArrayList<>();

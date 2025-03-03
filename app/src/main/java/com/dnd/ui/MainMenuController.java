@@ -5,10 +5,14 @@ import com.dnd.dao.CharacterDAO;
 import com.dnd.dao.ItemDAO;
 import com.dnd.dao.LocationDAO;
 import com.dnd.dao.QuestDAO;
+import com.dnd.dao.SessionLogDAO;
 import com.dnd.model.DNDCharacter;
 import com.dnd.model.Item;
 import com.dnd.model.Location;
 import com.dnd.model.Quest;
+import com.dnd.model.SessionLog;
+import com.mysql.cj.Session;
+
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -52,10 +56,17 @@ public class MainMenuController {
     @FXML private TableColumn<Quest, String> questNameCol;
     @FXML private TableColumn<Quest, Number> questExpCol;
 
+    // Session Table
+    @FXML private TableView<SessionLog> sessionLogTable;
+    @FXML private TableColumn<SessionLog, Number> sessionLogIdCol;
+    @FXML private TableColumn<SessionLog, String> sessionLogTimeStamp;
+    @FXML private TableColumn<SessionLog, String> sessionLogInfoText;
+
     private final CharacterDAO characterDAO = new CharacterDAO();
     private final ItemDAO itemDAO = new ItemDAO();
     private final LocationDAO locationDAO = new LocationDAO();
     private final QuestDAO questDAO = new QuestDAO();
+    private final SessionLogDAO sessionLogDAO = new SessionLogDAO();
 
     public void setApp(App app) {
         this.app = app;
@@ -67,6 +78,7 @@ public class MainMenuController {
         setupItemTable();
         setupLocationTable();
         setupQuestTable();
+        setupSessionLogTable();
     }
 
     // -------------------- CHARACTER MANAGEMENT --------------------
@@ -307,6 +319,127 @@ public class MainMenuController {
         }
     }
 
+
+    // -------------------- SESSION LOG MANAGEMENT --------------------
+
+    // Setup SessionLog Table
+    private void setupSessionLogTable() {
+        // Map the table columns to the SessionLog properties
+        sessionLogIdCol.setCellValueFactory(
+            cellData -> new javafx.beans.property.SimpleIntegerProperty(
+                cellData.getValue().getSessionId()
+            )
+        );
+    
+        // Display timestamp as string
+        sessionLogTimeStamp.setCellValueFactory(
+                cellData -> {
+                    if (cellData.getValue().getTimestamp() != null) {
+                        return new javafx.beans.property.SimpleStringProperty(
+                                cellData.getValue().getTimestamp().toString()
+                        );
+                    } else {
+                        return new javafx.beans.property.SimpleStringProperty("");
+                    }
+                });
+    
+        sessionLogInfoText.setCellValueFactory(
+                cellData -> new javafx.beans.property.SimpleStringProperty(
+                        cellData.getValue().getInfoText()
+                ));
+    
+        loadSessionLogData();
+    }
+    
+
+    // Load SessionLogs
+    private void loadSessionLogData() {
+        List<SessionLog> logs = sessionLogDAO.getAllSessionLogs();
+        sessionLogTable.getItems().setAll(logs);
+    }
+    
+
+    // Handle Add SessionLog
+    @FXML
+    private void handleAddSessionLog() {
+        // Create a new SessionLog with minimal default data
+        // e.g., sessionId = 0 to indicate a new record
+        SessionLog newLog = new SessionLog(0, "New Session Log");
+        
+        // Show the form/dialog if you have one:
+        boolean confirmed = showSessionLogForm(newLog);
+        if (confirmed) {
+            // Insert into DB
+            sessionLogDAO.insertSessionLog(newLog);
+            // Refresh table
+            loadSessionLogData();
+        }
+    }
+    
+
+    // Handle Edit SessionLog
+    @FXML
+    private void handleEditSessionLog() {
+        SessionLog selectedLog = sessionLogTable.getSelectionModel().getSelectedItem();
+        if (selectedLog == null) {
+            showAlert("No Session Log Selected", "Please select a Session Log to edit.");
+            return;
+        }
+
+        boolean confirmed = showSessionLogForm(selectedLog);
+        if (confirmed) {
+            sessionLogDAO.updateSessionLog(selectedLog);
+            loadSessionLogData();
+        }
+    }
+
+
+    // Handle Delete SessionLog
+    @FXML
+    private void handleDeleteSessionLog() {
+        SessionLog selectedLog = sessionLogTable.getSelectionModel().getSelectedItem();
+        if (selectedLog == null) {
+            showAlert("No Session Log Selected", "Please select a Session Log to delete.");
+            return;
+        }
+
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, 
+                "Are you sure you want to delete this Session Log?",
+                ButtonType.YES, ButtonType.NO);
+        alert.showAndWait();
+
+        if (alert.getResult() == ButtonType.YES) {
+            sessionLogDAO.deleteSessionLog(selectedLog.getSessionId());
+            loadSessionLogData();
+        }
+    }
+
+
+    // Show SessionLog Form
+    private boolean showSessionLogForm(SessionLog sessionLog) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/dnd/ui/SessionLogForm.fxml"));
+            Scene scene = new Scene(loader.load());
+    
+            Stage dialogStage = new Stage();
+            dialogStage.setTitle("Session Log Editor");
+            dialogStage.initModality(Modality.WINDOW_MODAL);
+            dialogStage.setScene(scene);
+    
+            // Retrieve the controller from the loader
+            SessionLogFormController controller = loader.getController();
+            controller.setDialogStage(dialogStage);
+            controller.setSessionLog(sessionLog);
+    
+            dialogStage.showAndWait();
+            return controller.isConfirmed();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
+    
 
     // -------------------- UTILITIES --------------------
 
